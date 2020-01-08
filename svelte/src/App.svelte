@@ -1,6 +1,7 @@
 <script>
 	import Counter from './tasks/counter.svelte'
 	import TempConverter from './tasks/tempConverter.svelte'
+	import FlightBooker from './tasks/flightBooker.svelte'
 </script>
 
 <main>
@@ -8,6 +9,7 @@
 
 	<Counter />
 	<TempConverter />
+	<FlightBooker />
 </main>
 
 <style>
