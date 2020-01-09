@@ -19,7 +19,7 @@
   updateF()
 </script>
 
-<Card title={'Temperature Converter'}>
+<Card title="Temperature Converter">
   <span><input bind:value={c} on:input={updateF}/> Celsius</span>
   &nbsp;&nbsp;=&nbsp;&nbsp;
   <span><input bind:value={f} on:input={updateC}/> Fahrenheit</span>
