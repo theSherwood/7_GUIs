@@ -3,6 +3,7 @@
 	import TempConverter from './tasks/tempConverter.svelte'
 	import FlightBooker from './tasks/flightBooker.svelte'
 	import Timer from './tasks/timer.svelte'
+	import Crud from './tasks/crud.svelte'
 </script>
 
 <main>
@@ -12,6 +13,7 @@
 	<TempConverter />
 	<FlightBooker />
 	<Timer />
+	<Crud />
 </main>
 
 <style>

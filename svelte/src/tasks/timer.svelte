@@ -36,7 +36,7 @@
 
 <style>
   .wrapper {
-    max-width: 300px;
+    max-width: 400px;
     text-align: left;
     margin: auto;
     display: grid;
