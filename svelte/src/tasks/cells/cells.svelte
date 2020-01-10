@@ -2,16 +2,37 @@
   import Card from "../../components/card.svelte";
   import {cells} from './store.js';
 
+  const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
   let shape = [5, 10]
   let focused
   $: console.log($cells)
+  let rows = range(shape[1])
+  let columns = letterRange(shape[0])
 
   function range(n) {
     return [...Array(n).keys()]
   }
 
-  let rows = range(shape[1])
-  let columns = range(shape[0])
+  function getBase26(n) {
+    let result = []
+    while (n > 25) {
+      let remainder = n%26
+      result.push(remainder)
+      n = Math.floor(n/26) - 1
+    }
+    result.push(n)
+    return result.reverse()
+  }
+
+  function getNumberAsLetters(n) {
+    let arr = getBase26(n)
+    return arr.map(num => LETTERS[num]).join('')
+  }
+
+  function letterRange(n) {
+    return range(n).map(getNumberAsLetters)
+  }
 
   function handleClick(e) {
     console.log(e.target)
@@ -33,22 +54,33 @@
 
 <Card title="Cells">
   <table on:click={handleClick}>
-    {#each rows as row, i}
-      <tr id={'row-'+i}>
-        {#each columns as cell, j}
-          <td id={i+','+j}>
-            <input 
-              value={
-                focused === i+','+j 
-                ? $cells[i+','+j] || ''
-                : $cells[i+','+j] || add('2,3')}
-              on:focus={()=>handleFocus(i+','+j)}
-              on:input={(e)=>handleInput(e, i+','+j)}
-            />
-          </td>
+    <thead>
+      <tr>
+        <td class='column-key'></td>
+        {#each columns as column}
+          <td>{column}</td>
         {/each}
       </tr>
-    {/each}
+    </thead>
+    <tbody>
+      {#each rows as i}
+        <tr id={'row-'+i}>
+          <td class='column-key'>{i}</td>
+          {#each columns as j}
+            <td id={j+i}>
+              <input 
+                value={
+                  focused === j+i 
+                  ? $cells[j+i] || ''
+                  : $cells[j+i] || add('2,3')}
+                on:focus={()=>handleFocus(j+i)}
+                on:input={(e)=>handleInput(e, j+i)}
+              />
+            </td>
+          {/each}
+        </tr>
+      {/each}
+    </tbody>
   </table>
 </Card>
 
@@ -80,5 +112,11 @@
 
   input:focus {
     text-align: left;
+  }
+
+  .column-key {
+    width: min-content;
+    padding-left: 15px;
+    padding-right: 15px;
   }
 </style>
