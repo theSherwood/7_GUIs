@@ -26,7 +26,7 @@
 <Card title="Timer">
   <div class="wrapper">
     Elapsed Time:
-    <meter min={start - 1} max={end} value={time} />
+    <progress value={(time-start)/duration} />
     <div class="duration">{(duration / 1000).toFixed(1)}s</div>
     Duration:
     <input type="range" min={0} max={MAX} bind:value={duration} />
@@ -46,7 +46,7 @@
     grid-auto-flow: row;
   }
 
-  input, meter {
+  input {
     padding: 0;
     justify-self: stretch;
     align-self: center;
