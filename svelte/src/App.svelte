@@ -4,6 +4,7 @@
 	import FlightBooker from './tasks/flightBooker.svelte'
 	import Timer from './tasks/timer.svelte'
 	import Crud from './tasks/crud.svelte'
+	import CircDrawer from './tasks/circDrawer.svelte'
 </script>
 
 <main>
@@ -14,6 +15,7 @@
 	<FlightBooker />
 	<Timer />
 	<Crud />
+	<CircDrawer />
 </main>
 
 <style>
