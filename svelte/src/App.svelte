@@ -5,17 +5,19 @@
 	import Timer from './tasks/timer.svelte'
 	import Crud from './tasks/crud.svelte'
 	import CircDrawer from './tasks/circDrawer.svelte'
+	import Cells from './tasks/cells/cells.svelte'
 </script>
 
 <main>
 	<a href="../../index.html">Home</a>
 
-	<Counter />
+	<!-- <Counter />
 	<TempConverter />
 	<FlightBooker />
 	<Timer />
 	<Crud />
-	<CircDrawer />
+	<CircDrawer /> -->
+	<Cells />
 </main>
 
 <style>
