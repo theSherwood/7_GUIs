@@ -1,7 +1,9 @@
 export class Parser {
-  constructor(store) {
+  constructor(store, columns, rows) {
     this.cells = {}
     this.store = store
+    this.columns = columns
+    this.rows = rows
     this.letters = 'abcdefghijklmnopqrstuvwxyz'
     this.operations = {
       sum: (a, b) => a + b,
@@ -18,6 +20,23 @@ export class Parser {
     })
   }
 
+  cartesianProduct(letters, numbers) {
+    var result = [];
+    letters.forEach(letter => {
+      numbers.forEach(number => {
+        result.push(letter + number);
+      });
+    });
+    return result;
+  }
+
+  findArrRange(arr, start, end) {
+    let startI = arr.indexOf(start)
+    let endI = arr.indexOf(end)
+    if (startI == -1 || endI == -1 || startI > endI) return []
+    return arr.slice(startI, endI + 1)
+  }
+
   parseOperand(op) {
     if (!isNaN(Number(op))) return Number(op)
     if (op in this.cells) return Number(this.parse(this.cells[op]))
@@ -31,7 +50,7 @@ export class Parser {
       return this.originalString
 
     formula = formula.slice(1, formula.length - 1)
-    let formulaArr = formula.split(':')
+    let formulaArr = formula.split(',')
 
     if (formulaArr.length !== 2) return this.originalString
 

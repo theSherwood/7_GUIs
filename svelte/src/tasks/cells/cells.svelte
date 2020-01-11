@@ -3,14 +3,14 @@
   import {cells} from './store.js';
   import {Parser} from './parse.js'
 
-  let p = (new Parser(cells))
 
   const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
-  let shape = [100, 100]
+  const shape = [100, 100]
+  const rows = range(shape[1])
+  const columns = letterRange(shape[0])
+  const p = (new Parser(cells, columns, rows))
   let focused
-  let rows = range(shape[1])
-  let columns = letterRange(shape[0])
   let tBody
 
   function range(n) {
