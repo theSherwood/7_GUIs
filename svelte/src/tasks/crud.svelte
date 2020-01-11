@@ -8,7 +8,7 @@
     ['Duncan', 'Idaho']
   ]
   $: filteredEntries = entries.filter(
-    entry => entry[1].toLowerCase().startsWith(prefix)
+    entry => entry[1].toLowerCase().startsWith(prefix.toLowerCase())
   )
   let selected = 0
   let name = ''
