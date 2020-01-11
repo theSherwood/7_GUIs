@@ -1,7 +1,9 @@
 <script>
   import Card from "../../components/card.svelte";
-  import {cells} from './store.js';
+  import {cells} from './store.js'
+  import {sampleData} from './sampleData.js'
   import {Parser} from './parse.js'
+  cells.set(sampleData)
 
   const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
