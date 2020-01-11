@@ -1,5 +1,6 @@
-class Parser {
+export class Parser {
   constructor(store) {
+    this.cells = {}
     this.store = store
     this.letters = 'abcdefghijklmnopqrstuvwxyz'
     this.operations = {
@@ -10,54 +11,24 @@ class Parser {
       mod: (a, b) => a % b,
       exp: (a, b) => a ** b
     }
+
+    // subscribe to store
+    this.store.subscribe(value => {
+      this.cells = value
+    })
   }
 
-  isLetter(str) {
-    return str.length === 1 && letters.includes(str)
-  }
+  parseOperand(op) {
+    if (!isNaN(Number(op))) return Number(op)
+    if (op in this.cells) return Number(this.parse(this.cells[op]))
+    if (/[a-z]+\d+/.test(op)) return 0
 
-  getLetterAsNumber(letter) {
-    return letters.indexOf(letter)
-  }
-
-  getLettersAsNumber(letters) {
-    // TODO
-  }
-
-  resolveCell(letters, number) {
-    // TODO
-  }
-
-  parseCell(formula) {
-    let i = 0
-    while (this.isLetter(formula[i])) {
-      i++
-    }
-    let letters = formula.slice(0, i)
-    let number = Number(formula.slice(i))
-
-    if (isNaN(number) || letters === '') return this.originalString
-
-    return this.resolveCell(letters, number)
-  }
-
-  parseOperand(operand) {
-    let i = 0
-    while (this.isLetter(operand[i])) {
-      i++
-    }
-    let letters = operand.slice(0, i)
-    let number = Number(operand.slice(i))
-
-    if (isNaN(number)) return null
-
-    if (letters === '') return number
-
-    return this.resolveCell(letters, number)
+    return null
   }
 
   parseOperation(op, formula) {
-    if (!(formula.startsWith('(') && formula.endsWith(')'))) return this.originalString
+    if (!(formula.startsWith('(') && formula.endsWith(')')))
+      return this.originalString
 
     formula = formula.slice(1, formula.length - 1)
     let formulaArr = formula.split(':')
@@ -77,12 +48,14 @@ class Parser {
     if (typeof str !== 'string') return ''
     if (!str.startsWith('=')) return str
 
-    let formula = str.slice(1).toLowerCase()
-
-    if (formula.slice(0, 3) in this.operations) {
-      return this.parseOperation(formula.slice(0, 3), formula.slice(3), str)
+    let formula = str.slice(1)
+    if (formula.slice(0, 3).toLowerCase() in this.operations) {
+      return this.parseOperation(
+        formula.slice(0, 3).toLowerCase(),
+        formula.slice(3).toUpperCase()
+      )
     } else {
-      return this.parseCell(formula, str)
+      return this.cells[formula] || str
     }
   }
 }
