@@ -3,10 +3,9 @@
   import {cells} from './store.js';
   import {Parser} from './parse.js'
 
-
   const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
-  const shape = [100, 100]
+  export let shape = [100, 100]
   const rows = range(shape[1])
   const columns = letterRange(shape[0])
   const p = (new Parser(cells, columns, rows))
@@ -92,6 +91,10 @@
     if (direction === 'after') return arr[index+1] || null
     return null
   }
+
+  function clear() {
+    cells.set({})
+  }
 </script>
 
 <Card title="Cells">
@@ -130,6 +133,7 @@
       </tbody>
     </table>
   </div>
+  <button on:click={clear}>Clear</button>
 </Card>
 
 <style>
@@ -166,6 +170,10 @@
 
   input:focus {
     text-align: left;
+  }
+
+  button {
+    background: white;
   }
 
   .row-key {

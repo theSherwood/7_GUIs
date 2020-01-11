@@ -4,7 +4,6 @@ export class Parser {
     this.store = store
     this.columns = columns
     this.rows = rows
-    this.letters = 'abcdefghijklmnopqrstuvwxyz'
     this.operations = {
       sum: (a, b) => a + b,
       sub: (a, b) => a - b,
@@ -21,13 +20,13 @@ export class Parser {
   }
 
   cartesianProduct(letters, numbers) {
-    var result = [];
+    var result = []
     letters.forEach(letter => {
       numbers.forEach(number => {
-        result.push(letter + number);
-      });
-    });
-    return result;
+        result.push(letter + number)
+      })
+    })
+    return result
   }
 
   findArrRange(arr, start, end) {
@@ -37,10 +36,46 @@ export class Parser {
     return arr.slice(startI, endI + 1)
   }
 
-  parseOperand(op) {
-    if (!isNaN(Number(op))) return Number(op)
-    if (op in this.cells) return Number(this.parse(this.cells[op]))
-    if (/[a-z]+\d+/.test(op)) return 0
+  getRange(rangeStart, rangeEnd) {
+    rangeStart = this.splitOperand(rangeStart)
+    rangeEnd = this.splitOperand(rangeEnd)
+    let letters = this.findArrRange(this.columns, rangeStart[0], rangeEnd[0])
+    let numbers = this.findArrRange(this.rows, rangeStart[1], rangeEnd[1])
+    return this.cartesianProduct(letters, numbers)
+  }
+
+  splitOperand(operand) {
+    return [operand.match(/[a-zA-Z]+/)[0], Number(operand.match(/\d+/)[0])]
+  }
+
+  rangeOperation(op, rangeStart, rangeEnd) {
+    if (!(this.isWellFormed(rangeStart) && this.isWellFormed(rangeEnd)))
+      return this.originalString
+
+    let range = this.getRange(rangeStart, rangeEnd)
+
+    return range
+      .map(address => Number(this.parse(this.cells[address])))
+      .reduce(this.operations[op])
+  }
+
+  singleOperation(op, operand1, operand2) {
+    let first = this.parseOperand(operand1)
+    let second = this.parseOperand(operand2)
+
+    if (first === null || second === null) return this.originalString
+
+    return this.operations[op](first, second).toString()
+  }
+
+  isWellFormed(operand) {
+    return /[a-zA-Z]+\d+/.test(operand)
+  }
+
+  parseOperand(operand) {
+    if (!isNaN(Number(operand))) return Number(operand)
+    if (operand in this.cells) return Number(this.parse(this.cells[operand]))
+    if (this.isWellFormed(operand)) return 0
 
     return null
   }
@@ -50,16 +85,26 @@ export class Parser {
       return this.originalString
 
     formula = formula.slice(1, formula.length - 1)
-    let formulaArr = formula.split(',')
+
+    let operationType
+    let formulaArr
+    if (formula.includes(',')) {
+      operationType = 'single'
+      formulaArr = formula.split(',')
+    } else if (formula.includes(':')) {
+      operationType = 'range'
+      formulaArr = formula.split(':')
+    }
 
     if (formulaArr.length !== 2) return this.originalString
 
-    let first = this.parseOperand(formulaArr[0])
-    let second = this.parseOperand(formulaArr[1])
+    if (operationType === 'single')
+      return this.singleOperation(op, formulaArr[0], formulaArr[1])
 
-    if (first === null || second === null) return this.originalString
+    if (operationType === 'range')
+      return this.rangeOperation(op, formulaArr[0], formulaArr[1])
 
-    return this.operations[op](first, second).toString()
+    return this.originalString
   }
 
   parse(str) {
