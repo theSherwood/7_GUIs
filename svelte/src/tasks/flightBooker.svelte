@@ -69,10 +69,6 @@
     display: block;
   }
 
-  button {
-    background: #fff;
-  }
-
   :disabled {
     background: #eee;
   }

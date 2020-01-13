@@ -55,7 +55,6 @@
   button {
     grid-column: 1/3;
     grid-row: auto;
-    background: white;
   }
 
   .duration {

@@ -5,6 +5,12 @@
 </script>
 
 <Card title="Counter">
-  {count}&nbsp;&nbsp;&nbsp;
+  {count}
   <button on:click={() => count++}>+</button>
 </Card>
+
+<style>
+  button {
+    margin-left: 15px;
+  }
+</style>

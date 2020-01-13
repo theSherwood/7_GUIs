@@ -174,10 +174,6 @@
     text-align: left;
   }
 
-  button {
-    background: white;
-  }
-
   .row-key {
     width: min-content;
     padding-left: 15px;

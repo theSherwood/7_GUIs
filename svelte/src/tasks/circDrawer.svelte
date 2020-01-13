@@ -134,10 +134,6 @@
     height: 100%;
   }
 
-  button {
-    background: white;
-  }
-
   circle:hover {
     fill: #eee;
   }
