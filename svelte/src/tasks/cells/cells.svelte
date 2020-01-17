@@ -38,8 +38,8 @@
     return arr.map(num => LETTERS[num]).join('')
   }
 
-  function handleClick(e) {
-    $cells[e.target.id] = $cells[e.target.id] || ''
+  function handleClick(e, key) {
+    $cells[key] = $cells[key] || ''
   }
 
   function handleFocus(e, key) {
@@ -66,7 +66,7 @@
       let newRow = findAdjacent(rows, row, 'before')
       selector = newRow !== null ? column+newRow : null
     }
-    if (e.key === "ArrowDown") {
+    if (e.key === "ArrowDown" || e.key === "Enter") {
       let newRow = findAdjacent(rows, row, 'after')
       selector = newRow !== null ? column+newRow : null
     }
@@ -101,7 +101,7 @@
 
 <Card title="Cells">
   <div class="wrapper">
-    <table on:click={handleClick}>
+    <table>
       <thead>
         <tr>
           <td class='row-key'></td>
@@ -123,6 +123,7 @@
                     ? $cells[j+i] || ''
                     : p.parse($cells[j+i])
                   }
+                  on:click={(e)=>handleClick(e, j+i)}
                   on:focus={(e)=>handleFocus(e, j+i)}
                   on:blur={handleBlur}
                   on:keydown={(e)=>handleKeydown(e, j, i)}
