@@ -3,6 +3,7 @@ import './app.css'
 
 import {counter} from './tasks/counter'
 import {tempConverter} from './tasks/tempConverter'
+import {flightBooker} from './tasks/flightBooker'
 
 export const app = () => {
   return html`
@@ -11,6 +12,7 @@ export const app = () => {
 
       <${counter} />
       <${tempConverter} />
+      <${flightBooker} />
     </main>
   `;
 } 
