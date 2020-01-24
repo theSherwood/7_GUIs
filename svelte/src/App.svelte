@@ -11,12 +11,12 @@
 <main>
 	<a href="../../index.html">Home</a>
 
-	<Counter />
+	<!-- <Counter />
 	<TempConverter />
 	<FlightBooker />
 	<Timer />
 	<Crud />
-	<CircDrawer />
+	<CircDrawer /> -->
 	<Cells />
 </main>
 
