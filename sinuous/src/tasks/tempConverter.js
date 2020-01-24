@@ -1,12 +1,16 @@
-import {html, o} from 'sinuous'
+import { html, o } from "sinuous";
 import { card } from "../components/Card";
 
 import "./tempConverter.css";
 
-// TODO: use onkeydown instead of oninput
-
 function trunc(n) {
   return Number(n.toFixed(2));
+}
+function remove0(n) {
+  if (n.length > 1 && n[0] === '0' && n[1] !== '.') {
+    return n.slice(1)
+  }
+  return n
 }
 function getC(f) {
   return trunc((5 / 9) * (f - 32));
@@ -17,40 +21,51 @@ function getF(c) {
 let r = /^-?\d*.?\d*$/;
 
 export const tempConverter = () => {
-  let c = o(0)
-  let f = o(32)
+  let c = o(0);
+  let f = o(32);
 
-  function updateFromC(e) {
-    let value = e.target.value || '0'
+  const updateFromC = e => update(e, c, f, getF)
+  const updateFromF = e => update(e, f, c, getC)
+
+  const update = (e, from, to, get) => {
+    let value = e.target.value || "0";
     if (value === "0-") {
-      c("-");
+      from("-");
     } else if (r.test(value)) {
-      value = Number(value) || 0;
-      c(value);
-      f(getF(value));
+      value = remove0(value) || 0;
+      from(value);
+      to(get(value) || 0);
     }
   }
 
-  function updateFromF(e) {
-    let value = e.target.value || '0'
-    if (value === "0-") {
-      f('-')
-    } else if (r.test(value)) {
-      value = Number(value) || 0;
-      f(value);
-      c(getC(value));
+  function handleKeyDown(e) {
+    if (
+      ["Backspace", "Tab", "Alt", "ArrowLeft", "ArrowRight", "Meta"].includes(
+        e.key
+      )
+    )
+      return;
+    if (
+      (e.target.value === "0" && !"1234567890.-".includes(e.key)) ||
+      (e.target.value !== "0" && !"123456789.".includes(e.key)) ||
+      (e.target.value.includes('.') && !"123456789".includes(e.key))
+    ) {
+      e.preventDefault();
+      e.stopPropagation();
     }
   }
 
   return html`
     <${card} title="Temperature Converter">
       <span>
-        <input value=${c} oninput=${updateFromC} /> Celsius
+        <input value=${c} onkeydown=${handleKeyDown} oninput=${updateFromC} />
+        Celsius
       </span>
       =
       <span>
-        <input value=${f} oninput=${updateFromF} /> Fahrenheit
+        <input value=${f} onkeydown=${handleKeyDown} oninput=${updateFromF} />
+        Fahrenheit
       </span>
     <//>
-  `
+  `;
 };
