@@ -4,6 +4,8 @@ import './app.css'
 import {counter} from './tasks/counter'
 import {tempConverter} from './tasks/tempConverter'
 import {flightBooker} from './tasks/flightBooker'
+import {timer} from './tasks/timer'
+import {crud} from './tasks/crud'
 
 export const app = () => {
   return html`
@@ -13,6 +15,8 @@ export const app = () => {
       <${counter} />
       <${tempConverter} />
       <${flightBooker} />
+      <${timer} />
+      <${crud} />
     </main>
   `;
 } 
