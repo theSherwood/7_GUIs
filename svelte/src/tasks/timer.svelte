@@ -5,7 +5,6 @@
 
   let duration = 5000;
   let start;
-  $: end = start + duration;
 
   let time;
   let interval;
@@ -15,6 +14,7 @@
     }, 10);
   }
   function startTimer() {
+    clearInterval(interval)
     start = new Date().valueOf();
     time = start;
     interval = createInterval();

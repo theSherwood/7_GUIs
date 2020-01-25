@@ -23,7 +23,7 @@
     entries = entries
   }
   function deleteHandler() {
-    entries = entries.filter((entry, i) => i !== selected)
+    entries = entries.filter((entry, i) => i != selected)
   }
 </script>
 
