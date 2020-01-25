@@ -6,6 +6,7 @@ import {tempConverter} from './tasks/tempConverter'
 import {flightBooker} from './tasks/flightBooker'
 import {timer} from './tasks/timer'
 import {crud} from './tasks/crud'
+import {circDrawer} from './tasks/circDrawer'
 
 export const app = () => {
   return html`
@@ -17,6 +18,7 @@ export const app = () => {
       <${flightBooker} />
       <${timer} />
       <${crud} />
+      <${circDrawer} />
     </main>
   `;
 } 
