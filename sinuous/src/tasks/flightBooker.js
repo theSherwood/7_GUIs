@@ -1,7 +1,7 @@
-import {html, o} from 'sinuous'
-import {S} from 'sinuous/observable'
-import {card} from '../components/card' 
-import './flightBooker.css'
+import { html, o } from "sinuous";
+import { S } from "sinuous/observable";
+import { card } from "../components/card";
+import "./flightBooker.css";
 
 let flightMap = {
   1: "one-way flight",
@@ -23,17 +23,22 @@ function formatAsString(date) {
     .slice(0, 10)
     .split("-")
     .reverse()
-    .join(".")
+    .join(".");
 }
 
 export const flightBooker = () => {
-  let flightType = o(1)
-  let startDate = o(formatAsString(new Date()))
-  let returnDate = o(formatAsString(new Date()))
+  let flightType = o(1);
+  let startDate = o(formatAsString(new Date()));
+  let returnDate = o(formatAsString(new Date()));
 
   let error1 = S(() => !tryAsDate(startDate()));
   let error2 = S(() => !tryAsDate(returnDate()));
   let error3 = S(() => tryAsDate(returnDate()) < tryAsDate(startDate()));
+
+  let isBookButtonDisabled = S(() => error1() || error2() || error3());
+  let isOneWay = S(() => flightType() === 1);
+  let startDateClass = S(() => (error1() ? "error" : ""));
+  let returnDateClass = S(() => (error2() ? "error" : ""));
 
   function book() {
     let timeStrings = {
@@ -54,22 +59,19 @@ export const flightBooker = () => {
         </select>
         <input
           value=${startDate}
-          class=${() => (error1() ? "error" : "")}
+          class=${startDateClass}
           oninput=${e => startDate(e.target.value)}
         />
         <input
           value=${returnDate}
-          class=${() => (error2() ? "error" : "")}
+          class=${returnDateClass}
           oninput=${e => returnDate(e.target.value)}
-          disabled=${() => flightType() === 1}
+          disabled=${isOneWay}
         />
-        <button
-          onclick=${book}
-          disabled=${() => error1() || error2() || error3()}
-        >
+        <button onclick=${book} disabled=${isBookButtonDisabled}>
           Book
         </button>
       </div>
     <//>
-  `; 
-}
+  `;
+};
