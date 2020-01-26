@@ -7,6 +7,7 @@ import {flightBooker} from './tasks/flightBooker'
 import {timer} from './tasks/timer'
 import {crud} from './tasks/crud'
 import {circDrawer} from './tasks/circDrawer'
+import {cells} from './tasks/cells/cells'
 
 export const app = () => {
   return html`
@@ -19,6 +20,7 @@ export const app = () => {
       <${timer} />
       <${crud} />
       <${circDrawer} />
+      <${cells} />
     </main>
   `;
 } 
