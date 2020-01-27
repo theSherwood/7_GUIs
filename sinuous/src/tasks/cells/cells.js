@@ -52,7 +52,7 @@ export const cells = (props) => {
   let focused = o(undefined);
   let tBody; // Used as a ref
 
-  function handleClick(e, key) {
+  function createNewCell(key) {
     let storeRef = sample(store);
     if (!storeRef[key]) {
       storeRef[key] = o("");
@@ -61,6 +61,7 @@ export const cells = (props) => {
   }
 
   function handleFocus(e, key) {
+    createNewCell(key)
     focused(key);
     setTimeout(() => {
       // The timeout allows the selection to occur after
@@ -137,13 +138,12 @@ export const cells = (props) => {
                             <input
                               id=${"input-" + j + i}
                               value=${() => {
-                                return store()[j + i]
+                                return (j+i) in store()
                                   ? focused() === j + i
                                     ? store()[j + i]()
                                     : p.parse(store()[j + i]())
                                   : "";
                               }}
-                              onclick=${e => handleClick(e, j + i)}
                               onfocus=${e => handleFocus(e, j + i)}
                               onblur=${handleBlur}
                               onkeydown=${e => handleKeydown(e, j, i)}
