@@ -1,5 +1,6 @@
 import Counter from './tasks/Counter'
 import TempConverter from './tasks/TempConverter'
+import Timer from './tasks/Timer'
 import './App.css';
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
 
       <Counter />
       <TempConverter />
+      <Timer />
     </main>
   );
 }
