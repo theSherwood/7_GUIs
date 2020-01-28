@@ -1,5 +1,6 @@
 import Counter from './tasks/Counter'
 import TempConverter from './tasks/TempConverter'
+import FlightBooker from './tasks/FlightBooker'
 import Timer from './tasks/Timer'
 import './App.css';
 
@@ -10,6 +11,7 @@ function App() {
 
       <Counter />
       <TempConverter />
+      <FlightBooker />
       <Timer />
     </main>
   );
