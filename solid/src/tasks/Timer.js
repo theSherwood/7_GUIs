@@ -1,4 +1,4 @@
-import {createState, onCleanup, createMemo, createEffect} from 'solid-js'
+import {createState, onCleanup, createMemo} from 'solid-js'
 import Card from "../components/Card";
 
 import "./Timer.css";
