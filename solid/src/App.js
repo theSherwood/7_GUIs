@@ -3,6 +3,7 @@ import TempConverter from './tasks/TempConverter'
 import FlightBooker from './tasks/FlightBooker'
 import Timer from './tasks/Timer'
 import CRUD from './tasks/CRUD'
+import CircDrawer from './tasks/CircDrawer'
 import './App.css';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
       <FlightBooker />
       <Timer />
       <CRUD />
+      <CircDrawer />
     </main>
   );
 }
