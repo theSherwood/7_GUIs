@@ -22,16 +22,13 @@ const CRUD = () => {
     state.entries
       .map((entry, i) => [entry[0], entry[1], i])
       .filter(entry =>
-        entry[1]
-          .toLowerCase()
-          .startsWith(state.prefix.toLowerCase())
+        entry[1].toLowerCase().startsWith(state.prefix.toLowerCase())
       )
   );
 
   createEffect(() => {
     state.prefix;
     setState({ selected: -1 });
-    console.log(state.entries[0])
   });
 
   function createHandler() {
@@ -40,11 +37,9 @@ const CRUD = () => {
     });
   }
   function updateHandler() {
-    // TODO: make this more Solid idiomatic
-    
     // if selected > -1 then update entries[selected]
-    if (state.selected > -1) { 
-      setState('entries', [state.selected], [state.name, state.surname])
+    if (state.selected > -1) {
+      setState("entries", [state.selected], [state.name, state.surname]);
     }
   }
   function deleteHandler() {
@@ -52,7 +47,7 @@ const CRUD = () => {
     if (state.selected > -1) {
       setState({
         entries: state.entries.filter((entry, i) => i != state.selected)
-      })
+      });
     }
   }
 
@@ -60,10 +55,13 @@ const CRUD = () => {
     <Card title="CRUD">
       <div class="wrapper">
         Filter prefix:
-        <input value={state.prefix} oninput={e => setState({prefix: e.target.value})} />
+        <input
+          value={state.prefix}
+          oninput={e => setState({ prefix: e.target.value })}
+        />
         <select
           value={state.selected}
-          oninput={e => setState({selected: e.target.value})}
+          oninput={e => setState({ selected: e.target.value })}
           size="4"
         >
           {filteredEntries().map(entry => (
@@ -74,9 +72,15 @@ const CRUD = () => {
         </select>
         <div>
           Name:
-          <input value={state.name} oninput={e => setState({name: e.target.value})} />
+          <input
+            value={state.name}
+            oninput={e => setState({ name: e.target.value })}
+          />
           Surname:
-          <input value={state.surname} oninput={e => setState({surname: e.target.value})} />
+          <input
+            value={state.surname}
+            oninput={e => setState({ surname: e.target.value })}
+          />
         </div>
         <div class="buttons">
           <button onclick={createHandler}>Create</button>
