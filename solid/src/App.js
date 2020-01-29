@@ -4,6 +4,8 @@ import FlightBooker from './tasks/FlightBooker'
 import Timer from './tasks/Timer'
 import CRUD from './tasks/CRUD'
 import CircDrawer from './tasks/CircDrawer'
+import Cells from './tasks/Cells/Cells'
+
 import './App.css';
 
 function App() {
@@ -17,6 +19,7 @@ function App() {
       <Timer />
       <CRUD />
       <CircDrawer />
+      <Cells />
     </main>
   );
 }
