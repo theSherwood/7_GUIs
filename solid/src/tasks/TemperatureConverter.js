@@ -1,7 +1,7 @@
 import {createState} from 'solid-js'
 import Card from "../components/Card";
 
-import "./TempConverter.css";
+import "./TemperatureConverter.css";
 
 function trunc(n) {
   return Number(n.toFixed(2));
@@ -20,7 +20,7 @@ function getF(c) {
 }
 let r = /^-?\d*.?\d*$/;
 
-const TempConverter = () => {
+const TemperatureConverter = () => {
   let [state, setState] = createState({
     c: 0,
     f: 32
@@ -75,4 +75,4 @@ const TempConverter = () => {
   )
 };
 
-export default TempConverter
+export default TemperatureConverter

@@ -1,7 +1,7 @@
 import React, { useState} from "react";
 import { Card } from "../components/Card";
 
-import './TempConverter.css'
+import './TemperatureConverter.css'
 
 function trunc(n) {
   return Number(n.toFixed(2));
@@ -14,7 +14,7 @@ function getF(c) {
 }
 let r = /^\d+.?\d*$/
 
-export const TempConverter = () => {
+export const TemperatureConverter = () => {
   let [c, setC] = useState(0);
   let [f, setF] = useState(32);
 

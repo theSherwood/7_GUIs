@@ -1,9 +1,9 @@
 import Counter from './tasks/Counter'
-import TempConverter from './tasks/TempConverter'
+import TemperatureConverter from './tasks/TemperatureConverter'
 import FlightBooker from './tasks/FlightBooker'
 import Timer from './tasks/Timer'
 import CRUD from './tasks/CRUD'
-import CircDrawer from './tasks/CircDrawer'
+import CircleDrawer from './tasks/CircleDrawer'
 import Cells from './tasks/Cells/Cells'
 
 import './App.css';
@@ -14,11 +14,11 @@ function App() {
       <a href="../../index.html">Home</a>
 
       <Counter />
-      <TempConverter />
+      <TemperatureConverter />
       <FlightBooker />
       <Timer />
       <CRUD />
-      <CircDrawer />
+      <CircleDrawer />
       <Cells />
     </main>
   );

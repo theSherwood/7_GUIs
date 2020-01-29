@@ -1,6 +1,6 @@
 import React from "react";
 import {Counter} from './tasks/Counter'
-import {TempConverter} from './tasks/TempConverter'
+import {TemperatureConverter} from './tasks/TemperatureConverter'
 
 import './App.css'
 
@@ -10,7 +10,7 @@ const App = () => {
       <a href="../../index.html">Home</a>
 
       <Counter />
-      <TempConverter />
+      <TemperatureConverter />
     </main>
   );
 };

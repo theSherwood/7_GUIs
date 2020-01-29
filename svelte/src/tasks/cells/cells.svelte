@@ -1,16 +1,16 @@
 <script>
   import Card from "../../components/card.svelte";
-  import {cells} from './store.js'
+  import {data} from './store.js'
   import {sampleData} from './sampleData.js'
   import {Parser} from './parse.js'
-  cells.set(sampleData)
+  data.set(sampleData)
 
   const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
   export let shape = [100, 100]
   const rows = range(shape[1])
   const columns = letterRange(shape[0])
-  const p = (new Parser(cells, columns, rows))
+  const p = (new Parser(data, columns, rows))
   let focused
   let tBody
 
@@ -39,7 +39,7 @@
   }
 
   function handleClick(e, key) {
-    $cells[key] = $cells[key] || ''
+    $data[key] = $data[key] || ''
   }
 
   function handleFocus(e, key) {
@@ -56,7 +56,7 @@
   }
 
   function handleInput(e, key) {
-    $cells[key] = e.target.value
+    $data[key] = e.target.value
   }
 
   function handleKeydown(e, column, row) {
@@ -95,7 +95,7 @@
   }
 
   function clear() {
-    cells.set({})
+    data.set({})
   }
 </script>
 
@@ -120,8 +120,8 @@
                   id={'input-'+j+i}
                   value={
                     focused === j+i 
-                    ? $cells[j+i] || ''
-                    : p.parse($cells[j+i])
+                    ? $data[j+i] || ''
+                    : p.parse($data[j+i])
                   }
                   on:click={(e)=>handleClick(e, j+i)}
                   on:focus={(e)=>handleFocus(e, j+i)}

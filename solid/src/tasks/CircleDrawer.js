@@ -1,9 +1,9 @@
 import { createState, createEffect, sample } from "solid-js";
 import Card from "../components/Card";
 
-import "./CircDrawer.css";
+import "./CircleDrawer.css";
 
-const CircDrawer = () => {
+const CircleDrawer = () => {
   const BASE_RADIUS = 30;
 
   let [state, setState] = createState({
@@ -137,4 +137,4 @@ const CircDrawer = () => {
   return view;
 };
 
-export default CircDrawer;
+export default CircleDrawer;

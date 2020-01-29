@@ -2,11 +2,11 @@ import {html} from 'sinuous'
 import './app.css'
 
 import {counter} from './tasks/counter'
-import {tempConverter} from './tasks/tempConverter'
+import {temperatureConverter} from './tasks/temperatureConverter'
 import {flightBooker} from './tasks/flightBooker'
 import {timer} from './tasks/timer'
 import {crud} from './tasks/crud'
-import {circDrawer} from './tasks/circDrawer'
+import {circleDrawer} from './tasks/circleDrawer'
 import {cells} from './tasks/cells/cells'
 
 export const app = () => {
@@ -15,11 +15,11 @@ export const app = () => {
       <a href="../../index.html">Home</a>
 
       <${counter} />
-      <${tempConverter} />
+      <${temperatureConverter} />
       <${flightBooker} />
       <${timer} />
       <${crud} />
-      <${circDrawer} />
+      <${circleDrawer} />
       <${cells} />
     </main>
   `;

@@ -43,20 +43,20 @@ export const cells = (props) => {
     // Make each entry an observable
     sampleData[key] = o(sampleData[key]);
   });
-  const store = o(sampleData);
+  const data = o(sampleData);
 
   const rows = range(shape[1]);
   const columns = letterRange(shape[0]);
-  const p = new Parser(store, columns, rows);
+  const p = new Parser(data, columns, rows);
 
   let focused = o(undefined);
   let tBody; // Used as a ref
 
   function createNewCell(key) {
-    let storeRef = sample(store);
-    if (!storeRef[key]) {
-      storeRef[key] = o("");
-      store(storeRef);
+    let dataRef = sample(data);
+    if (!dataRef[key]) {
+      dataRef[key] = o("");
+      data(dataRef);
     }
   }
 
@@ -75,7 +75,7 @@ export const cells = (props) => {
   }
 
   function handleInput(e, key) {
-    sample(store)[key](e.target.value);
+    sample(data)[key](e.target.value);
   }
 
   function handleKeydown(e, column, row) {
@@ -106,7 +106,7 @@ export const cells = (props) => {
   }
 
   function clear() {
-    store({});
+    data({});
   }
 
   const view = html`
@@ -138,10 +138,10 @@ export const cells = (props) => {
                             <input
                               id=${"input-" + j + i}
                               value=${() => {
-                                return (j+i) in store()
+                                return (j+i) in data()
                                   ? focused() === j + i
-                                    ? store()[j + i]()
-                                    : p.parse(store()[j + i]())
+                                    ? data()[j + i]()
+                                    : p.parse(data()[j + i]())
                                   : "";
                               }}
                               onfocus=${e => handleFocus(e, j + i)}

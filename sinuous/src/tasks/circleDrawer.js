@@ -2,9 +2,9 @@ import { html, o, svg } from "sinuous";
 import { subscribe, sample } from "sinuous/observable";
 import { card } from "../components/card";
 
-import "./circDrawer.css";
+import "./circleDrawer.css";
 
-export const circDrawer = () => {
+export const circleDrawer = () => {
   const BASE_RADIUS = 30;
 
   let step = o(0);

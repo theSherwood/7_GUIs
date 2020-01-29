@@ -1,7 +1,7 @@
 import { html, o } from "sinuous";
 import { card } from "../components/Card";
 
-import "./tempConverter.css";
+import "./temperatureConverter.css";
 
 function trunc(n) {
   return Number(n.toFixed(2));
@@ -20,7 +20,7 @@ function getF(c) {
 }
 let r = /^-?\d*.?\d*$/;
 
-export const tempConverter = () => {
+export const temperatureConverter = () => {
   let c = o(0);
   let f = o(32);
 
