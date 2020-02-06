@@ -1,7 +1,7 @@
-import { createState, createEffect } from "solid-js";
+import { createState } from "solid-js";
 import Card from "../../components/Card";
-import { sampleData } from "./sampleData.js";
-import { Parser } from "./parse.js";
+import { sampleData } from "./sampleData";
+import { Parser } from "./parse";
 
 import "./Cells.css";
 
