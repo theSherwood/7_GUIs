@@ -6,64 +6,50 @@ import "./temperatureConverter.css";
 function trunc(n) {
   return Number(n.toFixed(2));
 }
+
 function remove0(n) {
-  if (n.length > 1 && n[0] === '0' && n[1] !== '.') {
-    return n.slice(1)
-  }
-  return n
+  if (/^0\d+$/.test(n)) return n.slice(1);
+  if (/^-0\d+$/.test(n)) return "-" + n.slice(2);
+  return n;
 }
+
 function getC(f) {
-  return trunc((5 / 9) * (f - 32));
+  return trunc((5 / 9) * (f - 32)) || -17.78; // 0 F
 }
 function getF(c) {
-  return trunc((9 / 5) * c + 32);
+  return trunc((9 / 5) * c + 32) || 32; // 0 C
 }
 let r = /^-?\d*.?\d*$/;
+function isValid(temp) {
+  if (/^-?\d*$/.test(temp)) return true;
+  if (/^-?\d+[.]?\d*$/.test(temp)) return true;
+  return false;
+}
 
 export const temperatureConverter = () => {
   let c = o(0);
   let f = o(32);
 
-  const updateFromC = e => update(e, c, f, getF)
-  const updateFromF = e => update(e, f, c, getC)
+  const updateFromC = e => update(e, c, f, getF);
+  const updateFromF = e => update(e, f, c, getC);
 
   const update = (e, from, to, get) => {
-    let value = e.target.value || "0";
-    if (value === "0-") {
-      from("-");
-    } else if (r.test(value)) {
-      value = remove0(value) || 0;
-      from(value);
-      to(get(value) || 0);
-    }
-  }
-
-  function handleKeyDown(e) {
-    if (
-      ["Backspace", "Tab", "Alt", "ArrowLeft", "ArrowRight", "Meta"].includes(
-        e.key
-      )
-    )
-      return;
-    if (
-      (e.target.value === "0" && !"1234567890.-".includes(e.key)) ||
-      (e.target.value !== "0" && !"123456789.".includes(e.key)) ||
-      (e.target.value.includes('.') && !"123456789".includes(e.key))
-    ) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  }
+    let value = e.target.value; //|| "0";
+    if (!isValid(value)) return;
+    value = remove0(value)
+    from(value)
+    to(get(value))
+  };
 
   return html`
     <${card} title="Temperature Converter">
       <span>
-        <input value=${c} onkeydown=${handleKeyDown} oninput=${updateFromC} />
+        <input value=${c} oninput=${updateFromC} />
         Celsius
       </span>
       =
       <span>
-        <input value=${f} onkeydown=${handleKeyDown} oninput=${updateFromF} />
+        <input value=${f} oninput=${updateFromF} />
         Fahrenheit
       </span>
     <//>
