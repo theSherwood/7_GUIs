@@ -3,6 +3,7 @@
               [clojure.string :as string]
               [components.core :as components]))
 
+
 ;; Counter
 
 (defonce click-count (atom 0))
@@ -12,6 +13,7 @@
    "Counter"
    [:<> @click-count
     [:button {:on-click #(swap! click-count inc)} "+"]]))
+
 
 ;; Temperature Converter
 
@@ -29,9 +31,9 @@
 (set-validator! f #(is-valid? %))
 
 (defn get-f [c]
-  (str (int (+ (* (/ 9 5) (int c)) 32))))
+  (str (.toFixed (+ (* (/ 9 5) (float c)) 32) 2)))
 (defn get-c [f]
-  (str (int (* (/ 5 9) (- (int f) 32)))))
+  (str (.toFixed (* (/ 5 9) (- (float f) 32)) 2)))
 
 (defn remove0 [n]
   (cond
@@ -40,12 +42,12 @@
     :else n))
 
 (defn update-c [e]
-  (let [val (remove0 e.target.value)]
+  (let [val (remove0 js/e.target.value)]
     (do
       (reset! c val)
       (reset! f (get-f val)))))
 (defn update-f [e]
-  (let [val (remove0 e.target.value)]
+  (let [val (remove0 js/e.target.value)]
     (do
       (reset! f val)
       (reset! c (get-c val)))))
@@ -59,6 +61,7 @@
     "="
     [:span [:input 
             {:value @f :on-change update-f}] " Fahrenheit"]]))
+
 
 ;; Flight Booker
 
@@ -86,10 +89,10 @@
 (def flight-map {:1 "one-way flight"
                  :2 "return flight"})
 
-(def flight-type (atom :1))
-(def start-date (atom (as-string (new js/Date))))
-(def return-date (atom (as-string (new js/Date))))
-(def errors (atom {:1 nil :2 nil :3 nil}))
+(defonce flight-type (atom :1))
+(defonce start-date (atom (as-string (new js/Date))))
+(defonce return-date (atom (as-string (new js/Date))))
+(defonce errors (atom {:1 nil :2 nil :3 nil}))
 
 (add-watch start-date :error1 
            #(reset! errors (assoc @errors :1 (false? (as-date %4)))))
@@ -113,16 +116,50 @@
   (components/card
    "Flight Booker"
    [:div
-    [:select {:value @flight-type :on-change (fn [e] (reset! flight-type e.target.value))}
+    [:select {:value @flight-type :on-change (fn [e] (reset! flight-type js/e.target.value))}
      [:option {:value :1} (:1 flight-map)]
      [:option {:value :2} (:2 flight-map)]]
     [:input {:value @start-date
              :class (if (@errors :1) "error" "")
-             :on-change (fn [e] (reset! start-date e.target.value))}]
+             :on-change (fn [e] (reset! start-date js/e.target.value))}]
     [:input {:value @return-date 
              :class (if (@errors :2) "error" "")
-             :on-change (fn [e] (reset! return-date e.target.value)) 
+             :on-change (fn [e] (reset! return-date js/e.target.value)) 
              :disabled (= @flight-type :1)}]
     [:button {:on-click book 
               :disabled (or (@errors :1) (@errors :2) (@errors :3))} 
      "Book"]]))
+
+
+;; Timer
+
+(def MAX 30000)
+
+(defonce duration (atom 5000))
+(defonce start (atom nil))
+(defonce now (atom nil))
+(defonce interval (atom nil))
+
+(defn create-interval []
+  (js/setInterval 
+   #(reset! now (.valueOf (js/Date.)))
+   10))
+(defn start-timer []
+  (js/clearInterval @interval)
+  (reset! start (.valueOf (js/Date.)))
+  (reset! now @start)
+  (reset! interval (create-interval)))
+
+(start-timer)
+
+(defn timer []
+  (components/card
+   "Timer"
+   [:div {:class "wrapper"}
+    "Elapsed Time:"
+    [:progress {:value (/ (- @now @start) @duration)}]
+    [:div {:class "duration"} (.toFixed (/ @duration 1000) 1)]
+    "Duration"
+    [:input {:type "range" :min 0 :max MAX :value @duration 
+             :on-change (fn [e] (reset! duration js/e.target.value))}]
+    [:button {:on-click start-timer} "Reset Timer"]]))

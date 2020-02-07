@@ -7,4 +7,5 @@
    
    [tasks/counter]
    [tasks/temperature-converter]
-   [tasks/flight-booker]])
+   [tasks/flight-booker]
+   [tasks/timer]])
