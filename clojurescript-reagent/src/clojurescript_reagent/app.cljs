@@ -5,4 +5,5 @@
   [:main {:class "App"}
    [:a {:href "../../../index.html"} "Home"]
    
-   [tasks/counter]])
+   [tasks/counter]
+   [tasks/temperature-converter]])
