@@ -1,0 +1,7 @@
+(ns components.core)
+
+(defn card [child-title children]
+  (let [title (clojure.string/replace child-title #" " "-")]
+   [:section {:class (str "Card " title)}
+    [:h2 title]
+    children]))
