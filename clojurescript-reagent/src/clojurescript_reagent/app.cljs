@@ -6,4 +6,5 @@
    [:a {:href "../../../index.html"} "Home"]
    
    [tasks/counter]
-   [tasks/temperature-converter]])
+   [tasks/temperature-converter]
+   [tasks/flight-booker]])
