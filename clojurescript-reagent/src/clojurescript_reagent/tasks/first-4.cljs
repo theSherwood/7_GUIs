@@ -14,11 +14,15 @@
 
 ;; Temperature Converter
 
-(def c (atom "0"))
-(def f (atom "32"))
+(defonce c (atom "0"))
+(defonce f (atom "32"))
 
-(defn is-valid? [n]
-    (re-find #"^-?\d*.?\d*$" n))
+(defn is-valid? [n] 
+  (and (< (count n) 10)
+       (cond
+         (re-find #"^-?\d*$" n) true
+         (re-find #"^-?\d+[.]?\d*$" n) true
+         :else false)))
 
 (set-validator! c #(is-valid? %))
 (set-validator! f #(is-valid? %))
@@ -28,14 +32,22 @@
 (defn get-c [f]
   (str (int (* (/ 5 9) (- (int f) 32)))))
 
+(defn remove0 [n]
+  (cond
+    (re-find #"^0\d+" n) (clojure.string/join (rest n))
+    (re-find #"^-0\d+" n) (str "-" (clojure.string/join (rest (rest n))))
+    :else n))
+
 (defn update-c [e]
-  (do
-    (reset! c e.target.value)
-    (reset! f (get-f e.target.value))))
+  (let [val (remove0 e.target.value)]
+    (do
+      (reset! c val)
+      (reset! f (get-f val)))))
 (defn update-f [e]
-  (do
-    (reset! f e.target.value)
-    (reset! c (get-c e.target.value))))
+  (let [val (remove0 e.target.value)]
+    (do
+      (reset! f val)
+      (reset! c (get-c val)))))
 
 (defn temperature-converter []
   (components/card
@@ -48,69 +60,3 @@
             {:value @f :on-change update-f}] " Fahrenheit"]]))
 
 
-; function trunc(n) {
-;   return Number(n.toFixed(2));
-; }
-; function remove0(n) {
-;   if (n.length > 1 && n[0] === '0' && n[1] !== '.') {
-;     return n.slice(1)
-;   }
-;   return n
-; }
-; function getC(f) {
-;   return trunc((5 / 9) * (f - 32));
-; }
-; function getF(c) {
-;   return trunc((9 / 5) * c + 32);
-; }
-; let r = /^-?\d*.?\d*$/;
-
-; export const temperatureConverter = () => {
-;   let c = o(0);
-;   let f = o(32);
-
-;   const updateFromC = e => update(e, c, f, getF)
-;   const updateFromF = e => update(e, f, c, getC)
-
-;   const update = (e, from, to, get) => {
-;     let value = e.target.value || "0";
-;     if (value === "0-") {
-;       from("-");
-;     } else if (r.test(value)) {
-;       value = remove0(value) || 0;
-;       from(value);
-;       to(get(value) || 0);
-;     }
-;   }
-
-;   function handleKeyDown(e) {
-;     if (
-;       ["Backspace", "Tab", "Alt", "ArrowLeft", "ArrowRight", "Meta"].includes(
-;         e.key
-;       )
-;     )
-;       return;
-;     if (
-;       (e.target.value === "0" && !"1234567890.-".includes(e.key)) ||
-;       (e.target.value !== "0" && !"123456789.".includes(e.key)) ||
-;       (e.target.value.includes('.') && !"123456789".includes(e.key))
-;     ) {
-;       e.preventDefault();
-;       e.stopPropagation();
-;     }
-;   }
-
-;   return html`
-;     <${card} title="Temperature Converter">
-;       <span>
-;         <input value=${c} onkeydown=${handleKeyDown} oninput=${updateFromC} />
-;         Celsius
-;       </span>
-;       =
-;       <span>
-;         <input value=${f} onkeydown=${handleKeyDown} oninput=${updateFromF} />
-;         Fahrenheit
-;       </span>
-;     <//>
-;   `;
-; };
