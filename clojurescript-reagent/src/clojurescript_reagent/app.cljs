@@ -1,11 +1,13 @@
 (ns clojurescript-reagent.app
-  (:require [tasks.core :as tasks]))
+  (:require [tasks1to4.core :as t1to4]
+            [tasks5to6.core :as t5to6]))
 
 (defn app []
   [:main {:class "App"}
    [:a {:href "../../../index.html"} "Home"]
    
-   [tasks/counter]
-   [tasks/temperature-converter]
-   [tasks/flight-booker]
-   [tasks/timer]])
+   [t1to4/counter]
+   [t1to4/temperature-converter]
+   [t1to4/flight-booker]
+   [t1to4/timer]
+   [t5to6/crud]])
