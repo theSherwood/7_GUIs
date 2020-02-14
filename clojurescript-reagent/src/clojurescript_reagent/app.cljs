@@ -10,4 +10,6 @@
    [t1to4/temperature-converter]
    [t1to4/flight-booker]
    [t1to4/timer]
-   [t5to6/crud]])
+   [t5to6/crud]
+   [t5to6/circle-drawer]
+   ])
