@@ -77,6 +77,8 @@
 ;   });
 
 (def data (atom sample-data))
+(add-watch data :logger #(log %4))
+
 (def rows (range (first shape)))
 (def columns (letter-range (second shape)))
 
@@ -92,6 +94,11 @@
 ;   let focused = o(undefined);
 ;   let tBody; // Used as a ref
 
+(defn create-new-cell [key]
+  (if (contains? @data key)
+    ()
+    (swap! data assoc key "")))
+
 ;   function createNewCell(key) {
 ;     let dataRef = sample(data);
 ;     if (!dataRef[key]) {
@@ -101,9 +108,13 @@
 ;   }
 
 (defn handle-focus [e c r]
-  (let [key (str c r)]
-    (reset! focused key))
-  (log "handle-focus" e c r))
+  (let [key (str c r)
+        input js/e.target]
+    (create-new-cell key)
+    (reset! focused key)
+    (js/setTimeout 
+     #(.setSelectionRange input 0 9999)
+     10)))
 
 ;   function handleFocus(e, key) {
 ;     createNewCell(key)
