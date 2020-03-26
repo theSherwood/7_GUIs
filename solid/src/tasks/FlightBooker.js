@@ -1,5 +1,5 @@
 import { createState, createMemo } from "solid-js";
-import Card from "../presentationalComponents/Card";
+import Card from "../components/Card";
 
 import "./FlightBooker.css";
 

@@ -1,5 +1,5 @@
 import {createState} from 'solid-js'
-import Card from "../presentationalComponents/Card";
+import Card from "../components/Card";
 
 import "./TemperatureConverter.css";
 
