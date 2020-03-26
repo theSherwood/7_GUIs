@@ -1,5 +1,5 @@
 import { createState } from "solid-js";
-import Card from "../../components/Card";
+import Card from "../../presentationalComponents/Card";
 import { sampleData } from "./sampleData";
 import { Parser } from "./parse";
 

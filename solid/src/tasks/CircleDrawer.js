@@ -1,5 +1,5 @@
 import { createState, createEffect, sample } from "solid-js";
-import Card from "../components/Card";
+import Card from "../presentationalComponents/Card";
 
 import "./CircleDrawer.css";
 
