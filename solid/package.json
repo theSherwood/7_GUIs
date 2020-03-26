@@ -4,8 +4,8 @@
   "private": true,
   "homepage": "/solid/build/",
   "dependencies": {
-    "solid-js": "^0.16.4",
-    "solid-scripts": "0.0.27"
+    "solid-js": "^0.17.1",
+    "solid-scripts": "0.0.30"
   },
   "scripts": {
     "start": "solid-scripts start",
