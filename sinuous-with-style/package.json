@@ -1,0 +1,19 @@
+{
+  "name": "sinuous-with-style-guis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel index.html --public-url /sinuous/dist/",
+    "build": "parcel build index.html --public-url /sinuous/dist/"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "sinuous": "0.26.1",
+    "sinuous-style": "^0.3.1"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  }
+}
