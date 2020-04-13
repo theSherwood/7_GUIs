@@ -1,10 +1,8 @@
-import { html, o } from "sinuous";
-import { sample } from "sinuous/observable";
+import { html } from "sinuous-style";
+import { sample, o } from "sinuous/observable";
 import { card } from "../../components/card";
 import { sampleData } from "./sampleData.js";
 import { Parser } from "./parse.js";
-
-import "./cells.css";
 
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 function range(n) {
@@ -25,7 +23,7 @@ function getBase26(n) {
 }
 function getNumberAsLetters(n) {
   let arr = getBase26(n);
-  return arr.map(num => LETTERS[num]).join("");
+  return arr.map((num) => LETTERS[num]).join("");
 }
 function findAdjacent(arr, value, direction) {
   let index = arr.indexOf(value);
@@ -37,9 +35,9 @@ function findAdjacent(arr, value, direction) {
 }
 
 export const cells = (props) => {
-  let shape = props && props.shape || [100, 100]
-  
-  Object.keys(sampleData).forEach(key => {
+  let shape = (props && props.shape) || [100, 100];
+
+  Object.keys(sampleData).forEach((key) => {
     // Make each entry an observable
     sampleData[key] = o(sampleData[key]);
   });
@@ -61,7 +59,7 @@ export const cells = (props) => {
   }
 
   function handleFocus(e, key) {
-    createNewCell(key)
+    createNewCell(key);
     focused(key);
     setTimeout(() => {
       // The timeout allows the selection to occur after
@@ -109,7 +107,7 @@ export const cells = (props) => {
     data({});
   }
 
-  const view = html`
+  const view = html('cells')`
     <${card} title="Cells">
       <div class="wrapper">
         <table>
@@ -118,36 +116,33 @@ export const cells = (props) => {
               <td class="row-key"></td>
               ${() =>
                 columns.map(
-                  column =>
-                    html`
-                      <td class="column-key">${column}</td>
-                    `
+                  (column) => html()` <td class="column-key">${column}</td> `
                 )}
             </tr>
           </thead>
           <tbody>
             ${() =>
               rows.map(
-                i => html`
+                (i) => html()`
                   <tr id=${"row-" + i}>
                     <td class="row-key">${i}</td>
                     ${() =>
                       columns.map(
-                        j => html`
+                        (j) => html()`
                           <td id=${j + i}>
                             <input
                               id=${"input-" + j + i}
                               value=${() => {
-                                return (j+i) in data()
+                                return j + i in data()
                                   ? focused() === j + i
                                     ? data()[j + i]()
                                     : p.parse(data()[j + i]())
                                   : "";
                               }}
-                              onfocus=${e => handleFocus(e, j + i)}
+                              onfocus=${(e) => handleFocus(e, j + i)}
                               onblur=${handleBlur}
-                              onkeydown=${e => handleKeydown(e, j, i)}
-                              oninput=${e => handleInput(e, j + i)}
+                              onkeydown=${(e) => handleKeydown(e, j, i)}
+                              oninput=${(e) => handleInput(e, j + i)}
                             />
                           </td>
                         `
@@ -160,6 +155,53 @@ export const cells = (props) => {
       </div>
       <button onclick=${clear}>Clear</button>
     <//>
+
+    <style local>
+      .wrapper {
+        margin: auto;
+        overflow: scroll;
+        max-width: 600px;
+        max-height: 600px;
+        border: solid 1px #ddd;
+      }
+
+      table {
+        table-layout: fixed;
+        border-collapse: collapse;
+        border: solid 1px #ddd;
+        background: white;
+      }
+
+      td {
+        height: 30px;
+        border: solid 1px #ddd;
+        overflow: hidden;
+      }
+
+      input {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        text-align: right;
+        border: none;
+        outline: none;
+      }
+
+      input:focus {
+        text-align: left;
+      }
+
+      .row-key {
+        width: min-content;
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+
+      .column-key {
+        min-width: 120px;
+      }
+    </style>
   `;
 
   tBody = view.querySelector("tbody"); // Assign ref to domNode

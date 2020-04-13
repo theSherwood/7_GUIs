@@ -1,8 +1,6 @@
-import { html, o } from "sinuous";
-import { S } from "sinuous/observable";
+import { html } from "sinuous-style";
+import { S, o } from "sinuous/observable";
 import { card } from "../components/card";
-
-import "./timer.css";
 
 export const timer = () => {
   const MAX = 30000;
@@ -28,7 +26,7 @@ export const timer = () => {
 
   startTimer();
 
-  return html`
+  return html("timer")`
     <${card} title="Timer">
       <div class="wrapper">
         Elapsed Time:
@@ -40,10 +38,38 @@ export const timer = () => {
           min=${0}
           max=${MAX}
           value=${duration}
-          oninput=${e => duration(e.target.value)}
+          oninput=${(e) => duration(e.target.value)}
         />
         <button onclick=${startTimer}>Reset Timer</button>
       </div>
     <//>
+
+    <style local>
+      .wrapper {
+        max-width: 400px;
+        text-align: left;
+        margin: auto;
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-rows: auto;
+        grid-gap: 10px 10px;
+        grid-auto-flow: row;
+      }
+
+      input {
+        padding: 0;
+        justify-self: stretch;
+        align-self: center;
+      }
+
+      button {
+        grid-column: 1/3;
+        grid-row: auto;
+      }
+
+      .duration {
+        grid-column: 2;
+      }
+    </style>
   `;
 };

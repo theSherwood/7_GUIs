@@ -2,7 +2,7 @@ import { html } from "sinuous-style";
 
 export const card = ({ title }, ...children) => {
   return html("card")`
-    <section className=${"cardssss " + title.replace(" ", "-")}>
+    <section>
       <h2>${title}</h2>
       ${children}
     </section>

@@ -1,11 +1,10 @@
-import { html, o } from "sinuous";
-import { S } from "sinuous/observable";
+import { html } from "sinuous-style";
+import { S, o } from "sinuous/observable";
 import { card } from "../components/card";
-import "./flightBooker.css";
 
 let flightMap = {
   1: "one-way flight",
-  2: "return flight"
+  2: "return flight",
 };
 
 function tryAsDate(dateString) {
@@ -18,12 +17,7 @@ function tryAsDate(dateString) {
 }
 
 function formatAsString(date) {
-  return date
-    .toISOString()
-    .slice(0, 10)
-    .split("-")
-    .reverse()
-    .join(".");
+  return date.toISOString().slice(0, 10).split("-").reverse().join(".");
 }
 
 export const flightBooker = () => {
@@ -43,29 +37,30 @@ export const flightBooker = () => {
   function book() {
     let timeStrings = {
       1: " for " + startDate(),
-      2: " from " + startDate() + " to " + returnDate()
+      2: " from " + startDate() + " to " + returnDate(),
     };
     alert(
       "You have booked a " + flightMap[flightType()] + timeStrings[flightType()]
     );
   }
 
-  return html`
+  return html("flight-booker")`
     <${card} title="Flight Booker">
       <div>
-        <select value=${flightType} onchange=${e => flightType(e.target.value)}>
+        <select value=${flightType} onchange=${(e) =>
+    flightType(e.target.value)}>
           <option value="{1}">${flightMap[1]}</option>
           <option value="{2}">${flightMap[2]}</option>
         </select>
         <input
           value=${startDate}
           class=${startDateClass}
-          oninput=${e => startDate(e.target.value)}
+          oninput=${(e) => startDate(e.target.value)}
         />
         <input
           value=${returnDate}
           class=${returnDateClass}
-          oninput=${e => returnDate(e.target.value)}
+          oninput=${(e) => returnDate(e.target.value)}
           disabled=${isOneWay}
         />
         <button onclick=${book} disabled=${isBookButtonDisabled}>
@@ -73,5 +68,25 @@ export const flightBooker = () => {
         </button>
       </div>
     <//>
+
+    <style local>
+      div {
+        max-width: 400px;
+        margin: auto;
+      }
+
+      div > * {
+        width: 100%;
+        display: block;
+      }
+
+      :disabled {
+        background: #eee;
+      }
+
+      .error {
+        background: #dd9999;
+      }
+    </style>
   `;
 };

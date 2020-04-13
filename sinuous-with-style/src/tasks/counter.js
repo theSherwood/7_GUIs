@@ -1,15 +1,20 @@
-import {html, o} from 'sinuous'
-import {card} from '../components/card'
-
-import "./counter.css";
+import { html } from "sinuous-style";
+import { o } from "sinuous";
+import { card } from "../components/card";
 
 export const counter = () => {
-  let count = o(0)
+  let count = o(0);
 
-  return html`
+  return html("counter")`
     <${card} title="Counter">
       ${count}
-      <button onclick=${()=>count(count()+1)}>+</button>
+      <button onclick=${() => count(count() + 1)}>+</button>
     <//>
-  `
+
+    <style local>
+      button {
+        margin-left: 15px;
+      }
+    </style>
+  `;
 };

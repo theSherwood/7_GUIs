@@ -1,8 +1,6 @@
-import { html, o, svg } from "sinuous";
-import { subscribe, sample } from "sinuous/observable";
+import {html, svg} from 'sinuous-style'
+import { subscribe, sample, o } from "sinuous/observable";
 import { card } from "../components/card";
-
-import "./circleDrawer.css";
 
 export const circleDrawer = () => {
   const BASE_RADIUS = 30;
@@ -71,7 +69,7 @@ export const circleDrawer = () => {
     resizing(false);
   }
 
-  const overlay = () => html`
+  const overlay = () => html('circle-drawer')`
     <div class="overlay" onclick=${endResize}></div>
     <div class="resizer">
       <p>
@@ -90,7 +88,7 @@ export const circleDrawer = () => {
   `;
 
   const circleSVG = ({ circle, handleRightClick }) => {
-    return svg`
+    return svg()`
       <circle
         cx=${circle.x}
         cy=${circle.y}
@@ -106,7 +104,7 @@ export const circleDrawer = () => {
     `;
   };
 
-  const view = html`
+  const view = html('circle-drawer')`
     <${card} title="Circle Drawer">
       <div class="wrapper">
         <div class="buttons">
@@ -119,12 +117,12 @@ export const circleDrawer = () => {
           </button>
         </div>
         <div class="canvas">
-          ${() => svg`
+          ${() => svg()`
             <svg onclick=${addCircle}>
               ${() =>
                 present().map(
-                  cir =>
-                    html`
+                  (cir) =>
+                    html()`
                       <${circleSVG}
                         circle=${cir}
                         handleRightClick=${handleRightClick}
@@ -137,6 +135,55 @@ export const circleDrawer = () => {
         ${() => resizing() && overlay}
       </div>
     <//>
+
+    <style local>
+      .wrapper {
+        max-width: 400px;
+        text-align: left;
+        margin: auto;
+        position: relative;
+      }
+
+      .canvas {
+        width: 100%;
+        height: 400px;
+        position: relative;
+      }
+
+      .overlay {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: transparent;
+      }
+
+      .resizer {
+        background: rgba(200, 200, 200, 0.5);
+        position: absolute;
+        top: 50%;
+        left: 20px;
+        right: 20px;
+        transform: translateY(-50%);
+        text-align: center;
+      }
+
+      .buttons {
+        margin: auto;
+        width: max-content;
+      }
+
+      svg {
+        background: white;
+        width: 100%;
+        height: 100%;
+      }
+
+      circle:hover {
+        fill: #eee;
+      }
+    </style>
   `;
 
   return view;

@@ -1,29 +1,30 @@
-import { html, o } from "sinuous";
-import { S, subscribe } from "sinuous/observable";
+import { html } from "sinuous-style";
+import { S, subscribe, o } from "sinuous/observable";
 import { card } from "../components/card";
-
-import "./crud.css";
 
 export const crud = () => {
   let prefix = o("");
   let entries = o([
     o(["Paul", "Atreides"]),
     o(["Gurney", "Halleck"]),
-    o(["Duncan", "Idaho"])
+    o(["Duncan", "Idaho"]),
   ]);
   let filteredEntries = S(() =>
     // get filtered entries in which entry[1] startsWith prefix
-    // get array of [entry[0], entry[1], index]  
+    // get array of [entry[0], entry[1], index]
     entries()
       .map((entry, i) => [entry()[0], entry()[1], i])
-      .filter(entry =>
+      .filter((entry) =>
         entry[1].toLowerCase().startsWith(prefix().toLowerCase())
       )
   );
   let name = o("");
   let surname = o("");
-  let selected = o(-1)
-  subscribe(() => {prefix(); selected(-1)});
+  let selected = o(-1);
+  subscribe(() => {
+    prefix();
+    selected(-1);
+  });
 
   function createHandler() {
     entries(entries().concat(o([name(), surname()])));
@@ -37,28 +38,28 @@ export const crud = () => {
     selected() > -1 && entries(entries().filter((entry, i) => i != selected()));
   }
 
-  return html`
+  return html("crud")`
     <${card} title="CRUD">
       <div class="wrapper">
         Filter prefix:
-        <input value=${prefix} oninput=${e => prefix(e.target.value)} />
+        <input value=${prefix} oninput=${(e) => prefix(e.target.value)} />
         <select
           value=${selected}
-          oninput=${e => selected(e.target.value)}
+          oninput=${(e) => selected(e.target.value)}
           size="4"
         >
           ${() =>
             filteredEntries().map(
-              entry => html`
+              (entry) => html`
                 <option value=${entry[2]}>${entry[1]}, ${entry[0]}</option>
               `
             )}
         </select>
         <div>
           Name:
-          <input value=${name} oninput=${e => name(e.target.value)} />
+          <input value=${name} oninput=${(e) => name(e.target.value)} />
           Surname:
-          <input value=${surname} oninput=${e => surname(e.target.value)} />
+          <input value=${surname} oninput=${(e) => surname(e.target.value)} />
         </div>
         <div class="buttons">
           <button onclick=${createHandler}>Create</button>
@@ -67,5 +68,32 @@ export const crud = () => {
         </div>
       </div>
     <//>
+
+    <style local>   
+      .wrapper {
+        max-width: 400px;
+        text-align: left;
+        margin: auto;
+        display: grid;
+        grid-template-columns: 150px auto;
+        grid-template-rows: auto;
+        grid-gap: 10px 10px;
+        grid-auto-flow: row;
+      }
+
+      .buttons {
+        grid-column: 1/3;
+        display: flex;
+        justify-content: space-evenly;
+      }
+
+      button {
+        flex: 1 1 0%;
+      }
+
+      input {
+        width: 100%;
+      }
+    </style>
   `;
 };
