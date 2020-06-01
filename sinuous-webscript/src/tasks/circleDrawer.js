@@ -1,5 +1,6 @@
-import { html, o, svg } from "sinuous";
+import { o } from "sinuous";
 import { subscribe, sample } from "sinuous/observable";
+import { frag, div, input, svg, circle, button, p } from "../elements";
 import { card } from "../components/card";
 
 import "./circleDrawer.css";
@@ -16,12 +17,12 @@ export const circleDrawer = () => {
   subscribe(() => {
     if (resizing()) {
       let resizingIndex = sample(present).findIndex(
-        circle => circle.x === resizing().x && circle.y === resizing().y
+        (c) => c.x === resizing().x && c.y === resizing().y
       );
       let newPresent = sample(present).slice();
       newPresent[resizingIndex] = {
         ...sample(present)[resizingIndex],
-        r: Number(radius())
+        r: Number(radius()),
       };
       present(newPresent);
     }
@@ -30,11 +31,11 @@ export const circleDrawer = () => {
   function handleRightClick(e) {
     e.preventDefault();
     e.stopPropagation();
-    let circle = e.target;
+    let c = e.target;
     resizing({
-      x: circle.cx.baseVal.value,
-      y: circle.cy.baseVal.value,
-      r: circle.r.baseVal.value
+      x: c.cx.baseVal.value,
+      y: c.cy.baseVal.value,
+      r: c.r.baseVal.value,
     });
     radius(resizing().r);
   }
@@ -71,73 +72,46 @@ export const circleDrawer = () => {
     resizing(false);
   }
 
-  const overlay = () => html`
-    <div class="overlay" onclick=${endResize}></div>
-    <div class="resizer">
-      <p>
-        Adjust radius of circle at (${() => resizing().x},
-        ${() => resizing().y})
-      </p>
-      <p>${radius}</p>
-      <input
-        type="range"
-        min=${0}
-        max=${100}
-        value=${radius}
-        oninput=${e => radius(e.target.value)}
-      />
-    </div>
-  `;
+  const overlay = () =>
+    frag(
+      div.class`overlay`.onclick(endResize)(),
+      div.class`resizer`(
+        p`Adjust radius of circle at (${() => resizing().x},
+        ${() => resizing().y})`,
+        p(radius),
+        input.type`range`
+          .min(0)
+          .max(100)
+          .value(radius)
+          .oninput((e) => radius(e.target.value))
+      )
+    );
 
-  const circleSVG = ({ circle, handleRightClick }) => {
-    return svg`
-      <circle
-        cx=${circle.x}
-        cy=${circle.y}
-        r=${circle.r}
-        fill="white"
-        stroke="black"
-        onclick=${e => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-        oncontextmenu=${handleRightClick}
-      />
-    `;
-  };
+  const circleSVG = ({ c, handleRightClick }) =>
+    circle.cx(c.x).cy(c.y).r(c.r).fill`white`.stroke`black`
+      .onclick((e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      })
+      .oncontextmenu(handleRightClick);
 
-  const view = html`
-    <${card} title="Circle Drawer">
-      <div class="wrapper">
-        <div class="buttons">
-          <button disabled=${() => !step()} onclick=${undo}>Undo</button>
-          <button
-            disabled=${() => step() === snapshots().length - 1}
-            onclick=${redo}
-          >
-            Redo
-          </button>
-        </div>
-        <div class="canvas">
-          ${() => svg`
-            <svg onclick=${addCircle}>
-              ${() =>
-                present().map(
-                  cir =>
-                    html`
-                      <${circleSVG}
-                        circle=${cir}
-                        handleRightClick=${handleRightClick}
-                      />
-                    `
-                )}
-            </svg>
-          `}
-        </div>
-        ${() => resizing() && overlay}
-      </div>
-    <//>
-  `;
+  const view = card(
+    { title: "Circle Drawer" },
+    div.class`wrapper`(
+      div.class`buttons`(
+        button.disabled(() => !step()).onclick(undo)("Undo"),
+        button.disabled(() => step() === snapshots().length - 1).onclick(redo)(
+          "Redo"
+        )
+      ),
+      div.class`canvas`(
+        svg.onclick(addCircle)(() =>
+          present().map((c) => circleSVG({ c, handleRightClick }))
+        )
+      ),
+      () => resizing() && overlay()
+    )
+  );
 
   return view;
 };

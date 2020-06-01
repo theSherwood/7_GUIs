@@ -1,8 +1,18 @@
-import { html, o } from "sinuous";
+import { o } from "sinuous";
 import { sample } from "sinuous/observable";
 import { card } from "../../components/card";
 import { sampleData } from "./sampleData.js";
 import { Parser } from "./parse.js";
+import {
+  div,
+  table,
+  thead,
+  tbody,
+  tr,
+  td,
+  input,
+  button,
+} from "../../elements";
 
 import "./cells.css";
 
@@ -25,7 +35,7 @@ function getBase26(n) {
 }
 function getNumberAsLetters(n) {
   let arr = getBase26(n);
-  return arr.map(num => LETTERS[num]).join("");
+  return arr.map((num) => LETTERS[num]).join("");
 }
 function findAdjacent(arr, value, direction) {
   let index = arr.indexOf(value);
@@ -37,9 +47,9 @@ function findAdjacent(arr, value, direction) {
 }
 
 export const cells = (props) => {
-  let shape = props && props.shape || [100, 100]
-  
-  Object.keys(sampleData).forEach(key => {
+  let shape = (props && props.shape) || [100, 100];
+
+  Object.keys(sampleData).forEach((key) => {
     // Make each entry an observable
     sampleData[key] = o(sampleData[key]);
   });
@@ -61,7 +71,7 @@ export const cells = (props) => {
   }
 
   function handleFocus(e, key) {
-    createNewCell(key)
+    createNewCell(key);
     focused(key);
     setTimeout(() => {
       // The timeout allows the selection to occur after
@@ -109,58 +119,43 @@ export const cells = (props) => {
     data({});
   }
 
-  const view = html`
-    <${card} title="Cells">
-      <div class="wrapper">
-        <table>
-          <thead>
-            <tr>
-              <td class="row-key"></td>
-              ${() =>
-                columns.map(
-                  column =>
-                    html`
-                      <td class="column-key">${column}</td>
-                    `
-                )}
-            </tr>
-          </thead>
-          <tbody>
-            ${() =>
-              rows.map(
-                i => html`
-                  <tr id=${"row-" + i}>
-                    <td class="row-key">${i}</td>
-                    ${() =>
-                      columns.map(
-                        j => html`
-                          <td id=${j + i}>
-                            <input
-                              id=${"input-" + j + i}
-                              value=${() => {
-                                return (j+i) in data()
-                                  ? focused() === j + i
-                                    ? data()[j + i]()
-                                    : p.parse(data()[j + i]())
-                                  : "";
-                              }}
-                              onfocus=${e => handleFocus(e, j + i)}
-                              onblur=${handleBlur}
-                              onkeydown=${e => handleKeydown(e, j, i)}
-                              oninput=${e => handleInput(e, j + i)}
-                            />
-                          </td>
-                        `
-                      )}
-                  </tr>
-                `
-              )}
-          </tbody>
-        </table>
-      </div>
-      <button onclick=${clear}>Clear</button>
-    <//>
-  `;
+  const view = card(
+    { title: "Cells" },
+    div.class`wrapper`(
+      table(
+        thead(
+          tr(td.class`row-key`, () =>
+            columns.map((column) => td.class`column-key`(column))
+          )
+        ),
+        tbody(() =>
+          rows.map((i) =>
+            tr.id("row-" + i)(
+              td.class`row-key`(i),
+              columns.map((j) =>
+                td.id(j + i)(
+                  input
+                    .id("input-" + j + i)
+                    .onfocus((e) => handleFocus(e, j + i))
+                    .onblur(handleBlur)
+                    .onkeydown((e) => handleKeydown(e, j, i))
+                    .oninput((e) => handleInput(e, j + i))
+                    .value(() => {
+                      return j + i in data()
+                        ? focused() === j + i
+                          ? data()[j + i]()
+                          : p.parse(data()[j + i]())
+                        : "";
+                    })
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
+    button.onclick(clear)("Clear")
+  );
 
   tBody = view.querySelector("tbody"); // Assign ref to domNode
 
