@@ -11,5 +11,7 @@ export const {
   h2,
   div,
   input,
+  select,
+  option,
 } = builders(api.h);
 export const { svg } = builders(api.hs);
