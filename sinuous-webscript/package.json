@@ -1,0 +1,19 @@
+{
+  "name": "sinuous-webscript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel index.html --public-url /sinuous-webscript/dist/",
+    "build": "parcel build index.html --public-url /sinuous-webscript/dist/"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "sinuous": "0.27.3",
+    "webscript": "^0.1.2"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  }
+}
