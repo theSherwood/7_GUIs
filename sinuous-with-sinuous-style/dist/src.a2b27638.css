@@ -1,0 +1,46 @@
+.Cells .wrapper {
+  margin: auto;
+  overflow: scroll;
+  max-width: 600px;
+  max-height: 600px;
+  border: solid 1px #ddd;
+}
+
+.Cells table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  border: solid 1px #ddd;
+  background: white;
+}
+
+.Cells td {
+  height: 30px;
+  border: solid 1px #ddd;
+  overflow: hidden;
+}
+
+.Cells input {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: right;
+  border: none;
+  outline: none;
+}
+
+.Cells input:focus {
+  text-align: left;
+}
+
+.Cells .row-key {
+  width: min-content;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.Cells .column-key {
+  min-width: 120px;
+}
+
+/*# sourceMappingURL=/sinuous/dist/src.a2b27638.css.map */
