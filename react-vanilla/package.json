@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "parcel index.html --public-url /react-vanilla/dist/",
-    "build": "parcel build index.html --public-url 7_GUIs/react-vanilla/build/ -d build"
+    "build": "parcel build index.html -d build"
   },
   "author": "",
   "license": "MIT",
