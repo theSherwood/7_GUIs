@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel index.html --public-url /sinuous-with-sinuous-style/dist/",
-    "build": "parcel build index.html --public-url /sinuous-with-sinuous-style/dist/"
+    "dev": "parcel index.html --public-url ./",
+    "build": "parcel build index.html --public-url ./"
   },
   "author": "",
   "license": "MIT",

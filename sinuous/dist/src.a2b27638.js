@@ -124,110 +124,120 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.computed = exports.S = f;
-exports.cleanup = d;
+exports.cleanup = l;
 exports.isListening = u;
-exports.observable = exports.o = e;
-exports.root = r;
+exports.observable = exports.o = i;
+exports.on = v;
+exports.root = o;
 exports.sample = c;
-exports.subscribe = v;
-exports.transaction = i;
+exports.subscribe = d;
+exports.transaction = e;
 exports.unsubscribe = S;
 const n = [];
-let t, o;
+let t, r;
 
 function u() {
   return !!t;
 }
 
-function r(n) {
-  const o = t,
+function o(n) {
+  const r = t,
         u = () => {};
 
-  t = u, l(u);
-  const r = n(() => {
+  t = u, w(u);
+  const o = n(() => {
     a(u), t = void 0;
   });
-  return t = o, r;
+  return t = r, o;
 }
 
 function c(n) {
-  const o = t;
+  const r = t;
   t = void 0;
   const u = n();
-  return t = o, u;
+  return t = r, u;
 }
 
-function i(t) {
-  o = [];
-  const u = t();
-  let r = o;
-  return o = void 0, r.forEach(t => {
+function e(t) {
+  let u = r;
+  r = [];
+  const o = t();
+  let c = r;
+  return r = u, c.forEach(t => {
     if (t.t !== n) {
-      const o = t.t;
-      t.t = n, t(o);
+      const r = t.t;
+      t.t = n, t(r);
     }
-  }), u;
+  }), o;
 }
 
-function e(u) {
-  function r(c) {
-    if (0 === arguments.length) return t && !r.o.has(t) && (r.o.add(t), t.u.push(r)), u;
-    if (o) return r.t === n && o.push(r), r.t = c, c;
+function i(u) {
+  function o(c) {
+    if (0 === arguments.length) return t && !o.__o.has(t) && (o.__o.add(t), t.u.push(o)), u;
+    if (r) return o.t === n && r.push(o), o.t = c, c;
     u = c;
-    const i = t;
-    return t = void 0, r.i = new Set(r.o), r.i.forEach(n => n.s = !1), r.i.forEach(n => {
-      n.s || n();
-    }), t = i, u;
+    const e = t;
+    return t = void 0, o.o = new Set(o.__o), o.o.forEach(n => n.i = !1), o.o.forEach(n => {
+      n.i || n();
+    }), t = e, u;
   }
 
-  return r.$o = !0, r.o = new Set(), r.t = n, r;
+  return o.$o = !0, o.__o = new Set(), o.t = n, o;
 }
 
-function f(n, o) {
+function f(n, r) {
   function u() {
-    const r = t;
+    const o = t;
     t && t.__c.push(u);
     const c = u.__c;
-    return a(u), u.s = !0, t = u, o = n(o), c.forEach(n => {
-      -1 === u.__c.indexOf(n) && (n.s = !0);
+    return a(u), u.i = !0, t = u, r = n(r), c.forEach(n => {
+      -1 === u.__c.indexOf(n) && (n.i = !0);
     }), function n(t) {
-      return t.reduce((t, o) => t.concat(o, n(o.__c)), []);
-    }(u.__c).forEach(s), t = r, o;
+      return t.reduce((t, r) => t.concat(r, n(r.__c)), []);
+    }(u.__c).forEach(s), t = o, r;
   }
 
-  function r() {
-    return u.s ? u.u.forEach(n => n()) : o = u(), o;
+  function o() {
+    return u.i ? u.u.forEach(n => n()) : r = u(), r;
   }
 
-  return n.v = u, l(u), u(), r.$o = !0, r;
+  return n.s = u, w(u), u(), o.$o = !0, o;
 }
 
 function s(n) {
-  n.s && n.u.forEach(t => {
-    t.i && t.i.delete(n);
+  n.i && n.u.forEach(t => {
+    t.o && t.o.delete(n);
   });
 }
 
-function d(n) {
-  return t && t.S.push(n), n;
+function l(n) {
+  return t && t.l.push(n), n;
 }
 
-function v(n) {
-  return f(n), () => a(n.v);
+function d(n) {
+  return f(n), () => a(n.s);
+}
+
+function v(n, t, r, u) {
+  return n = [].concat(n), f(r => {
+    n.forEach(n => n());
+    let o = r;
+    return u || (o = c(() => t(r))), u = !1, o;
+  }, r);
 }
 
 function S(n) {
-  a(n.v);
+  a(n.s);
 }
 
 function a(n) {
   n.__c.forEach(a), n.u.forEach(t => {
-    t.o.delete(n), t.i && t.i.delete(n);
-  }), n.S.forEach(n => n()), l(n);
+    t.__o.delete(n), t.o && t.o.delete(n);
+  }), n.l.forEach(n => n()), w(n);
 }
 
-function l(n) {
-  n.u = [], n.__c = [], n.S = [];
+function w(n) {
+  n.u = [], n.__c = [], n.l = [];
 }
 },{}],"node_modules/sinuous/module/htm.js":[function(require,module,exports) {
 "use strict";
@@ -237,66 +247,66 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = _default;
 
-const t = (e, n, f, o) => {
-  let r = {};
+const t = (n, e, o, f) => {
+  let i = {};
 
-  for (let l = 1; l < n.length; l++) {
-    const u = n[l],
-          i = "number" == typeof u ? f[u] : u,
-          s = n[++l];
-    if (1 === s) o[0] = i;else if (3 === s) o[1] = Object.assign(o[1] || {}, i);else if (5 === s) (o[1] = o[1] || {})[n[++l]] = i;else if (6 === s) {
-      let t = n[++l],
-          e = (o[1] = o[1] || {})[t],
-          f = r[t];
-      f || "function" != typeof i && "function" != typeof e || (f = e && [e] || [], o[1][t] = function () {
+  for (let s = 1; s < e.length; s++) {
+    const r = e[s],
+          u = "number" == typeof r ? o[r] : r,
+          l = e[++s];
+    if (1 === l) f[0] = u;else if (3 === l) f[1] = Object.assign(f[1] || {}, u);else if (5 === l) (f[1] = f[1] || {})[e[++s]] = u;else if (6 === l) {
+      let t = e[++s],
+          n = (f[1] = f[1] || {})[t],
+          o = i[t];
+      o || "function" != typeof u && "function" != typeof n || (o = n && [n] || [], f[1][t] = function () {
         let t = "";
 
-        for (var e = 0; e < f.length; e++) t += "function" == typeof f[e] ? f[e]() : f[e];
+        for (var n = 0; n < o.length; n++) t += "function" == typeof o[n] ? o[n].call(this) : o[n];
 
         return t;
-      }), f ? f.push(i) : o[1][t] += i + "";
-    } else s ? o.push(e.apply(null, t(e, i, f, ["", null]))) : o.push(i);
+      }), o ? o.push(u) : f[1][t] += u + "";
+    } else if (l) {
+      const e = () => n.apply(null, t(n, u, o, ["", null]));
+
+      f.push("function" == typeof f[0] ? e : e());
+    } else f.push(u);
   }
 
-  return o;
+  return f;
 },
-      e = function (t) {
-  let e,
-      n,
-      f = 1,
-      o = "",
-      r = "",
-      l = [0];
+      n = function (t) {
+  let n,
+      e,
+      o = 1,
+      f = "",
+      i = "",
+      s = [0];
 
-  const u = t => {
-    1 === f && (t || (o = o.replace(/^\s*\n\s*|\s*\n\s*$/g, ""))) ? l.push(t || o, 0) : 3 === f && (t || o) ? (l.push(t || o, 1), f = 2) : 2 === f && "..." === o && t ? l.push(t, 3) : 2 === f && o && !t ? l.push(!0, 5, o) : f >= 5 && ((o || !t && 5 === f) && (l.push(o, f, n), f = 6), t && (l.push(t, f, n), f = 6)), o = "";
+  const r = t => {
+    1 === o && (t || (f = f.replace(/^\s*\n\s*|\s*\n\s*$/g, ""))) ? s.push(t || f, 0) : 3 === o && (t || f) ? (s.push(t || f, 1), o = 2) : 2 === o && "..." === f && t ? s.push(t, 3) : 2 === o && f && !t ? s.push(!0, 5, f) : o >= 5 && ((f || !t && 5 === o) && (s.push(f, o, e), o = 6), t && (s.push(t, o, e), o = 6)), f = "";
   };
 
-  for (let i = 0; i < t.length; i++) {
-    i && (1 === f && u(), u(i));
+  for (let u = 0; u < t.length; u++) {
+    u && (1 === o && r(), r(u));
 
-    for (let s = 0; s < t[i].length; s++) e = t[i][s], 1 === f ? "<" === e ? (u(), l = [l], f = 3) : o += e : 4 === f ? "--" === o && ">" === e ? (f = 1, o = "") : o = e + o[0] : r ? e === r ? r = "" : o += e : '"' === e || "'" === e ? r = e : ">" === e ? (u(), f = 1) : f && ("=" === e ? (f = 5, n = o, o = "") : "/" === e && (f < 5 || ">" === t[i][s + 1]) ? (u(), 3 === f && (l = l[0]), f = l, (l = l[0]).push(f, 2), f = 0) : " " === e || "\t" === e || "\n" === e || "\r" === e ? (u(), f = 2) : o += e), 3 === f && "!--" === o && (f = 4, l = l[0]);
+    for (let l = 0; l < t[u].length; l++) n = t[u][l], 1 === o ? "<" === n ? (r(), s = [s], o = 3) : f += n : 4 === o ? "--" === f && ">" === n ? (o = 1, f = "") : f = n + f[0] : i ? n === i ? i = "" : f += n : '"' === n || "'" === n ? i = n : ">" === n ? (r(), o = 1) : o && ("=" === n ? (o = 5, e = f, f = "") : "/" === n && (o < 5 || ">" === t[u][l + 1]) ? (r(), 3 === o && (s = s[0]), o = s, (s = s[0]).push(o, 2), o = 0) : " " === n || "\t" === n || "\n" === n || "\r" === n ? (r(), o = 2) : f += n), 3 === o && "!--" === f && (o = 4, s = s[0]);
   }
 
-  return u(), l;
+  return r(), s;
 },
-      n = "function" == typeof Map,
-      f = n ? new Map() : {},
-      o = n ? t => {
-  let n = f.get(t);
-  return n || f.set(t, n = e(t)), n;
-} : t => {
-  let n = "";
-
-  for (let e = 0; e < t.length; e++) n += t[e].length + "-" + t[e];
-
-  return f[n] || (f[n] = e(t));
+      e = new Map(),
+      o = function (o) {
+  let f = e.get(this);
+  return f || (f = new Map(), e.set(this, f)), f = t(this, f.get(o) || (f.set(o, f = n(o)), f), arguments, []), f.length > 1 ? f : f[0];
+},
+      f = function () {
+  const t = o.apply(this, arguments);
+  if (t) return Array.isArray(t) ? this(t) : "object" == typeof t ? t : this([t]);
 };
 
-function _default(e) {
-  const n = t(this, o(e), arguments, []),
-        f = n.length > 1 ? n : n[0];
-  if (f) return Array.isArray(f) ? this(f) : "object" == typeof f ? f : this([f]);
+function _default() {
+  const t = f.bind(this);
+  return (this.wrap || t).apply(t, arguments);
 }
 },{}],"node_modules/sinuous/module/sinuous.js":[function(require,module,exports) {
 "use strict";
@@ -304,102 +314,121 @@ function _default(e) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.context = l;
-exports.html = p;
-exports.svg = m;
-exports.observable = exports.o = exports.hs = exports.h = exports.api = void 0;
+exports.context = a;
+exports.h = p;
+exports.hs = m;
+exports.html = y;
+exports.svg = b;
+Object.defineProperty(exports, "o", {
+  enumerable: true,
+  get: function () {
+    return _observable.o;
+  }
+});
+Object.defineProperty(exports, "observable", {
+  enumerable: true,
+  get: function () {
+    return _observable.observable;
+  }
+});
+exports.api = void 0;
 
-var n = _interopRequireWildcard(require("./observable.js"));
+var _observable = require("./observable.js");
 
 var _htm = _interopRequireDefault(require("./htm.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+const i = {},
+      u = [];
+exports.api = i;
+let s = 0;
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-const o = {},
-      f = [];
-exports.api = o;
-let i = 0;
-
-function s(n, t, e) {
-  let s;
-  return "string" == typeof t ? t = document.createTextNode(t) : t instanceof Node || (t = o.h(f, t)), 11 === t.nodeType && (s = t.firstChild) && s !== t.lastChild && (s.t = t.lastChild.t = ++i), n.insertBefore(t, e || null), void 0 === s ? t : s;
+function l(n, e, t) {
+  let o;
+  return "string" == typeof e ? e = document.createTextNode(e) : e instanceof Node || (e = i.h(u, e)), 11 === e.nodeType && (o = e.firstChild) && o !== e.lastChild && (o.t = e.lastChild.t = ++s), n.insertBefore(e, t), void 0 === o ? e : o;
 }
 
-function r(n) {
+function c(n) {
   return this.o[n.type](n);
 }
 
-function l(n, t) {
-  for (let t in n) o[t] = n[t];
+function a(n, e) {
+  for (let e in n) i[e] = n[e];
 
-  function e() {
-    const n = f.slice.call(arguments);
-    let e;
+  return function () {
+    const n = Array.from(arguments);
+    let t;
 
-    function i(f) {
-      if (null == f) ;else if ("string" == typeof f) e ? s(e, f) : e = t ? document.createElementNS("http://www.w3.org/2000/svg", f) : document.createElement(f);else if (Array.isArray(f)) e || (e = document.createDocumentFragment()), f.forEach(i);else if (f instanceof Node) e ? s(e, f) : e = f;else if ("object" == typeof f) o.property(null, f, e, t);else if ("function" == typeof f) {
-        if (e) {
-          const n = s(e, "");
-          o.insert(e, f, n);
-        } else e = f.apply(null, n.splice(1));
-      } else s(e, "" + f);
+    function o(f) {
+      if (null == f) ;else if ("string" == typeof f) t ? l(t, f) : t = e ? document.createElementNS("http://www.w3.org/2000/svg", f) : document.createElement(f);else if (Array.isArray(f)) t || (t = document.createDocumentFragment()), f.forEach(o);else if (f instanceof Node) t ? l(t, f) : t = f;else if ("object" == typeof f) i.property(t, f, null, e);else if ("function" == typeof f) {
+        if (t) {
+          const n = l(t, "");
+          i.insert(t, f, n);
+        } else t = f.apply(null, n.splice(1));
+      } else l(t, "" + f);
     }
 
-    return n.forEach(i), e;
-  }
-
-  return o.h = e, e;
+    return n.forEach(o), t;
+  };
 }
 
-o.insert = function (n, t, e, f, i) {
-  return n = e && e.parentNode || n, t === f || (f && "string" != typeof f || !("string" == typeof t || "number" == typeof t && (t += "")) ? "function" == typeof t ? o.subscribe(function () {
-    f = o.insert(n, t.call({
-      el: n
-    }), e, f);
-  }) : (function (n, t, e, o) {
-    if (e) {
-      if (t) {
-        if (!o) {
-          const t = (o = e.previousSibling || n.lastChild).t;
-          if (t) for (o = o.previousSibling; o && o.t !== t;) o = o.previousSibling;
-        }
-
-        let t;
-
-        for (; o && o !== e;) t = o.nextSibling, n.removeChild(o), o.t = 0, o = t;
-      }
-    } else n.textContent = "";
-  }(n, f, e, i), f = null, t && !0 !== t && (f = s(n, t, e))) : (null != f && n.firstChild ? e ? (e.previousSibling || n.lastChild).data = t : n.firstChild.data = t : e ? s(n, t, e) : n.textContent = t, f = t)), f;
-}, o.property = function (n, t, e, f, i) {
-  if (null != t) if (!n || "attrs" === n && (f = !0)) for (n in t) o.property(n, t[n], e, f, i);else "o" !== n[0] || "n" !== n[1] || t.$o ? "function" == typeof t ? o.subscribe(function () {
-    o.property(n, t.call({
-      el: e,
-      name: n
-    }), e, f, i);
-  }) : i ? e.style.setProperty(n, t) : f || "data-" === n.slice(0, 5) || "aria-" === n.slice(0, 5) ? e.setAttribute(n, t) : "style" === n ? "string" == typeof t ? e.style.cssText = t : o.property(null, t, e, f, !0) : ("class" === n && (n += "Name"), e[n] = t) : function (n, t, e) {
-    t = t.slice(2).toLowerCase();
-    const f = o.cleanup(() => n.removeEventListener(t, r));
-    e ? n.addEventListener(t, r) : f(), (n.o || (n.o = {}))[t] = e;
-  }(e, n, t);
-}, o.add = s;
-const u = l(n),
-      c = l(n, !0),
-      a = n.o;
-exports.observable = exports.o = a;
-exports.hs = c;
-exports.h = u;
-
 function p() {
-  return _htm.default.apply(u, arguments);
+  return i.h.apply(i.h, arguments);
 }
 
 function m() {
-  return _htm.default.apply(c, arguments);
+  return i.hs.apply(i.hs, arguments);
 }
+
+function y() {
+  return _htm.default.apply(p, arguments);
+}
+
+function b() {
+  return _htm.default.apply(m, arguments);
+}
+
+i.insert = function (n, e, t, o, f) {
+  return n = t && t.parentNode || n, f = f || o instanceof Node && o, e === o || (o && "string" != typeof o || !("string" == typeof e || "number" == typeof e && (e += "")) ? "function" == typeof e ? i.subscribe(function () {
+    o = i.insert(n, e.call({
+      el: n,
+      endMark: t
+    }), t, o, f);
+  }) : (function (n, e, t, o) {
+    if (t) {
+      if (e) {
+        if (!o) {
+          const e = (o = t.previousSibling || n.lastChild).t;
+          if (e) for (o = o.previousSibling; o && o.t !== e;) o = o.previousSibling;
+        }
+
+        let e;
+
+        for (; o && o !== t;) e = o.nextSibling, n === o.parentNode && (n.removeChild(o), o.t = 0), o = e;
+      }
+    } else n.textContent = "";
+  }(n, o, t, f), o = null, e && !0 !== e && (o = l(n, e, t))) : (null != o && n.firstChild ? t ? (t.previousSibling || n.lastChild).data = e : n.firstChild.data = e : t ? l(n, e, t) : n.textContent = e, o = e)), o;
+}, i.property = function (n, e, t, o, f) {
+  if (null != e) if (!t || "attrs" === t && (o = !0)) for (t in e) i.property(n, e[t], t, o, f);else "o" !== t[0] || "n" !== t[1] || e.$o ? "function" == typeof e ? i.subscribe(function () {
+    i.property(n, e.call({
+      el: n,
+      name: t
+    }), t, o, f);
+  }) : f ? n.style.setProperty(t, e) : o || "data-" === t.slice(0, 5) || "aria-" === t.slice(0, 5) ? n.setAttribute(t, e) : "style" === t ? "string" == typeof e ? n.style.cssText = e : i.property(n, e, null, o, !0) : ("class" === t && (t += "Name"), n[t] = e) : function (n, e, t) {
+    e = e.slice(2).toLowerCase(), t ? n.addEventListener(e, c) : n.removeEventListener(e, c), (n.o || (n.o = {}))[e] = t;
+  }(n, t, e);
+}, i.add = l, i.h = a({
+  subscribe: _observable.subscribe,
+  cleanup: _observable.cleanup,
+  root: _observable.root,
+  sample: _observable.sample
+}), i.hs = a({
+  subscribe: _observable.subscribe,
+  cleanup: _observable.cleanup,
+  root: _observable.root,
+  sample: _observable.sample
+}, !0);
 },{"./observable.js":"node_modules/sinuous/module/observable.js","./htm.js":"node_modules/sinuous/module/htm.js"}],"node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
 
@@ -490,7 +519,7 @@ var _sinuous = require("sinuous");
 require("./card.css");
 
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n    <section className=", ">\n      <h2>", "</h2>\n      ", "\n    </section>\n  "]);
+  var data = _taggedTemplateLiteral(["\n    <section class=", ">\n      <h2>", "</h2>\n      ", "\n    </section>\n  "]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -551,42 +580,7 @@ var counter = function counter() {
 };
 
 exports.counter = counter;
-},{"sinuous":"node_modules/sinuous/module/sinuous.js","../components/card":"src/components/card.js","./counter.css":"src/tasks/counter.css"}],"src/components/Card.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.card = void 0;
-
-var _sinuous = require("sinuous");
-
-require("./card.css");
-
-function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n    <section className=", ">\n      <h2>", "</h2>\n      ", "\n    </section>\n  "]);
-
-  _templateObject = function _templateObject() {
-    return data;
-  };
-
-  return data;
-}
-
-function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
-
-var card = function card(_ref) {
-  var title = _ref.title;
-
-  for (var _len = arguments.length, children = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    children[_key - 1] = arguments[_key];
-  }
-
-  return (0, _sinuous.html)(_templateObject(), "card " + title.replace(" ", "-"), title, children);
-};
-
-exports.card = card;
-},{"sinuous":"node_modules/sinuous/module/sinuous.js","./card.css":"src/components/card.css"}],"src/tasks/temperatureConverter.css":[function(require,module,exports) {
+},{"sinuous":"node_modules/sinuous/module/sinuous.js","../components/card":"src/components/card.js","./counter.css":"src/tasks/counter.css"}],"src/tasks/temperatureConverter.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -601,7 +595,7 @@ exports.temperatureConverter = void 0;
 
 var _sinuous = require("sinuous");
 
-var _Card = require("../components/Card");
+var _card = require("../components/card");
 
 require("./temperatureConverter.css");
 
@@ -664,11 +658,11 @@ var temperatureConverter = function temperatureConverter() {
     to(get(value));
   };
 
-  return (0, _sinuous.html)(_templateObject(), _Card.card, c, updateFromC, f, updateFromF);
+  return (0, _sinuous.html)(_templateObject(), _card.card, c, updateFromC, f, updateFromF);
 };
 
 exports.temperatureConverter = temperatureConverter;
-},{"sinuous":"node_modules/sinuous/module/sinuous.js","../components/Card":"src/components/Card.js","./temperatureConverter.css":"src/tasks/temperatureConverter.css"}],"src/tasks/flightBooker.css":[function(require,module,exports) {
+},{"sinuous":"node_modules/sinuous/module/sinuous.js","../components/card":"src/components/card.js","./temperatureConverter.css":"src/tasks/temperatureConverter.css"}],"src/tasks/flightBooker.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -1623,7 +1617,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57821" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56045" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -1800,4 +1794,4 @@ function hmrAcceptRun(bundle, id) {
   }
 }
 },{}]},{},["node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.js"], null)
-//# sourceMappingURL=/sinuous/dist/src.a2b27638.js.map
+//# sourceMappingURL=src.a2b27638.js.map
