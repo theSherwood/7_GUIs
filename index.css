@@ -90,7 +90,8 @@ ul {
   stroke-linejoin: round;
   fill: none;
   top: 2px;
-  margin-left: 5px;
+  margin-left: -2px;
+  height: 20px;
 }
 
 .muted {
