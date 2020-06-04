@@ -1,0 +1,11 @@
+main.svelte-1jz7oo2{max-width:800px;margin:auto}
+button.svelte-e1cmgq{margin-left:15px}
+div.svelte-11hgowf.svelte-11hgowf{max-width:400px;margin:auto}div.svelte-11hgowf>.svelte-11hgowf{width:100%;display:block}.svelte-11hgowf.svelte-11hgowf:disabled{background:#eee}.error.svelte-11hgowf.svelte-11hgowf{background:#dd9999}
+.wrapper.svelte-1vtkr5s{max-width:400px;text-align:left;margin:auto;display:grid;grid-template-columns:auto auto;grid-template-rows:auto;grid-gap:10px 10px;grid-auto-flow:row}input.svelte-1vtkr5s{padding:0;justify-self:stretch;align-self:center}button.svelte-1vtkr5s{grid-column:1/3;grid-row:auto}.duration.svelte-1vtkr5s{grid-column:2}
+.wrapper.svelte-1r7r8vr{max-width:400px;text-align:left;margin:auto;display:grid;grid-template-columns:150px auto;grid-template-rows:auto;grid-gap:10px 10px;grid-auto-flow:row}.buttons.svelte-1r7r8vr{grid-column:1/3;display:flex;justify-content:space-evenly}button.svelte-1r7r8vr{flex:1 1 0%}input.svelte-1r7r8vr{width:100%}
+.wrapper.svelte-po4un5{max-width:400px;text-align:left;margin:auto;position:relative}.canvas.svelte-po4un5{width:100%;height:400px;position:relative}.overlay.svelte-po4un5{position:fixed;top:0;bottom:0;left:0;right:0;background:transparent}.resizer.svelte-po4un5{background:rgba(200,200,200,.5);position:absolute;top:50%;left:20px;right:20px;transform:translateY(-50%);text-align:center}.buttons.svelte-po4un5{margin:auto;width:max-content}svg.svelte-po4un5{background:white;width:100%;height:100%}circle.svelte-po4un5:hover{fill:#eee}
+span.svelte-38zn64{display:inline-block;padding-left:10px;padding-right:10px}
+.wrapper.svelte-a1z3mr{margin:auto;overflow:scroll;max-width:600px;max-height:600px;border:solid 1px #ddd}table.svelte-a1z3mr{table-layout:fixed;border-collapse:collapse;border:solid 1px #ddd;background:white}td.svelte-a1z3mr{height:30px;border:solid 1px #ddd;overflow:hidden}input.svelte-a1z3mr{width:100%;height:100%;margin:0;padding:0;text-align:right;border:none;outline:none}input.svelte-a1z3mr:focus{text-align:left}.row-key.svelte-a1z3mr{width:min-content;padding-left:15px;padding-right:15px}.column-key.svelte-a1z3mr{min-width:120px}
+section.svelte-pzfdjn{background:#f3f3f3;padding:20px;border-radius:10px;margin-top:20px;margin-bottom:20px;text-align:center}h2.svelte-pzfdjn{margin-top:0px;text-align:center}
+
+/*# sourceMappingURL=bundle.css.map */

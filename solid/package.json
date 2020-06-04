@@ -2,7 +2,7 @@
   "name": "solid-guis",
   "version": "0.1.0",
   "private": true,
-  "homepage": "/solid/build/",
+  "homepage": "./",
   "dependencies": {
     "solid-js": "^0.17.1",
     "solid-scripts": "0.0.30"
