@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel index.html",
-    "build": "parcel build index.html"
+    "dev": "parcel index.html --public-url /react-vanilla/dist/",
+    "build": "parcel build index.html --public-url /react-vanilla/dist/"
   },
   "author": "",
   "license": "MIT",
