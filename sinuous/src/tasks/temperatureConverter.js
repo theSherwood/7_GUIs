@@ -1,5 +1,5 @@
 import { html, o } from "sinuous";
-import { card } from "../components/Card";
+import { card } from "../components/card";
 
 import "./temperatureConverter.css";
 

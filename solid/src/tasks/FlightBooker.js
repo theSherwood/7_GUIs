@@ -1,5 +1,6 @@
 import { createState, createMemo } from "solid-js";
 import Card from "../components/Card";
+
 import "./FlightBooker.css";
 
 let flightMap = {

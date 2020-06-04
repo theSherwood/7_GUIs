@@ -1,0 +1,186 @@
+main.App {
+  max-width: 800px;
+  margin: auto;
+}
+section.card {
+  background: #f3f3f3;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.card h2 {
+  margin-top: 0px;
+  text-align: center;
+}
+.Counter button {
+  margin-left: 15px;
+}
+.Temperature-Converter span {
+  display: inline-block;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.Flight-Booker div {
+  max-width: 400px;
+  margin: auto;
+}
+
+.Flight-Booker div > * {
+  width: 100%;
+  display: block;
+}
+
+.Flight-Booker :disabled {
+  background: #eee;
+}
+
+.Flight-Booker .error {
+  background: #dd9999;
+}
+.Timer .wrapper {
+  max-width: 400px;
+  text-align: left;
+  margin: auto;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto;
+  grid-gap: 10px 10px;
+  grid-auto-flow: row;
+}
+
+.Timer input {
+  padding: 0;
+  justify-self: stretch;
+  align-self: center;
+}
+
+.Timer button {
+  grid-column: 1/3;
+  grid-row: auto;
+}
+
+.Timer .duration {
+  grid-column: 2;
+}
+
+.CRUD .wrapper {
+  max-width: 400px;
+  text-align: left;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 150px auto;
+  grid-template-rows: auto;
+  grid-gap: 10px 10px;
+  grid-auto-flow: row;
+}
+
+.CRUD .buttons {
+  grid-column: 1/3;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.CRUD button {
+  flex: 1 1 0%;
+}
+
+.CRUD input {
+  width: 100%;
+}
+
+.Circle-Drawer .wrapper {
+  max-width: 400px;
+  text-align: left;
+  margin: auto;
+  position: relative;
+}
+
+.Circle-Drawer .canvas {
+  width: 100%;
+  height: 400px;
+  position: relative;
+}
+
+.Circle-Drawer .overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+}
+
+.Circle-Drawer .resizer {
+  background: rgba(200,200,200,.5);
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  right: 20px;
+  transform: translateY(-50%);
+  text-align: center;
+}
+
+.Circle-Drawer .buttons {
+  margin: auto;
+  width: max-content;
+}
+
+.Circle-Drawer svg {
+  background: white;
+  width: 100%;
+  height: 100%;
+}
+
+.Circle-Drawer circle:hover {
+  fill: #eee;
+}
+.Cells .wrapper {
+  margin: auto;
+  overflow: scroll;
+  max-width: 600px;
+  max-height: 600px;
+  border: solid 1px #ddd;
+}
+
+.Cells table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  border: solid 1px #ddd;
+  background: white;
+}
+
+.Cells td {
+  height: 30px;
+  border: solid 1px #ddd;
+  overflow: hidden;
+}
+
+.Cells input {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: right;
+  border: none;
+  outline: none;
+}
+
+.Cells input:focus {
+  text-align: left;
+}
+
+.Cells .row-key {
+  width: min-content;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.Cells .column-key {
+  min-width: 120px;
+}
+
+/*# sourceMappingURL=/sinuous/dist/src.a2b27638.css.map */
