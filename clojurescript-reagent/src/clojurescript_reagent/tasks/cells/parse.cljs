@@ -1,4 +1,4 @@
-(ns cells.parse)
+(ns clojurescript-reagent.cells.parse)
 
 ; import {subscribe} from 'sinuous/observable'
 

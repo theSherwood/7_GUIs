@@ -1,9 +1,8 @@
-(ns cells.core
-    (:require [reagent.core :refer [atom]]
-              [clojure.string :as string]
-              [components.core :as components]
-              [cells.data :refer [sample-data]]
-              [utils.core :refer [log]]))
+(ns clojurescript-reagent.cells
+     (:require [reagent.core :refer [atom]]
+               [clojurescript-reagent.components.card :refer [card]]
+               [clojurescript-reagent.cells.sample-data :refer [sample-data]]
+               [utils.core :refer [log]]))
 
 ; import { html, o } from "sinuous";
 ; import { sample } from "sinuous/observable";
@@ -76,13 +75,13 @@
 ;     sampleData[key] = o(sampleData[key]);
 ;   });
 
-(def data (atom sample-data))
-(add-watch data :logger #(log %4))
+(def dat (atom sample-data))
+(add-watch dat :logger #(log %4))
 
 (def rows (range (first shape)))
 (def columns (letter-range (second shape)))
 
-;   const data = o(sampleData);
+;   const dat = o(sampleData);
 ;   const rows = range(shape[1]);
 ;   const columns = letterRange(shape[0]);
 
@@ -95,9 +94,9 @@
 ;   let tBody; // Used as a ref
 
 (defn create-new-cell [key]
-  (if (contains? @data key)
+  (if (contains? @dat key)
     ()
-    (swap! data assoc key "")))
+    (swap! dat assoc key "")))
 
 ;   function createNewCell(key) {
 ;     let dataRef = sample(data);
@@ -171,7 +170,7 @@
 ;   }
 
 (defn clear []
-  (reset! data {}))
+  (reset! dat {}))
 
 ;   function clear() {
 ;     data({});
@@ -198,7 +197,7 @@
         (map #(render-cell % r) columns)))
 
 (defn cells []
-  (components/card
+  (card
    "Cells"
    [:<>
     [:div {:class "wrapper"}

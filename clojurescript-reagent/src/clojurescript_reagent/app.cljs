@@ -1,17 +1,20 @@
 (ns clojurescript-reagent.app
-  (:require [tasks1to4.core :as t1to4]
-            [tasks5to6.core :as t5to6]
-            [cells.core :as cells]))
+  (:require
+   [clojurescript-reagent.counter :refer [counter]]
+   [clojurescript-reagent.temperature :refer [temperature]]
+   [clojurescript-reagent.flight :refer [flight]]
+   [clojurescript-reagent.timer :refer [timer]]
+   [clojurescript-reagent.crud :refer [crud]]
+   [clojurescript-reagent.circle :refer [circle]]
+   [clojurescript-reagent.cells :refer [cells]]))
 
 (defn app []
   [:main {:class "App"}
    [:a {:href "../../../index.html"} "Home"]
-   
-  ;  [t1to4/counter]
-  ;  [t1to4/temperature-converter]
-  ;  [t1to4/flight-booker]
-  ;  [t1to4/timer]
-  ;  [t5to6/crud]
-  ;  [t5to6/circle-drawer]
-   [cells/cells]
-   ])
+   [counter]
+   [temperature]
+   [flight]
+   [timer]
+   [crud]
+   [circle]
+   [cells]])

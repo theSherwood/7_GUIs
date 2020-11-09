@@ -1,4 +1,4 @@
-(ns cells.data)
+(ns clojurescript-reagent.cells.sample-data)
 
 (def sample-data {
                  :A0 "Data",
