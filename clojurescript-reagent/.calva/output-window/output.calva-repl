@@ -23,4 +23,7 @@ clj::user=>
 ; Error while connecting cljs REPL: Aborted
 
 ; Jack-in done.
-clj::user=> 
+clj::user=> :cljs/quit
+
+
+; Interrupting Jack-in process.
