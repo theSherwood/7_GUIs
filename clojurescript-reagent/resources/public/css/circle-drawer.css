@@ -1,0 +1,46 @@
+.Circle-Drawer .wrapper {
+  max-width: 400px;
+  text-align: left;
+  margin: auto;
+  position: relative;
+}
+
+.Circle-Drawer .canvas {
+  width: 100%;
+  height: 400px;
+  position: relative;
+}
+
+.Circle-Drawer .overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+}
+
+.Circle-Drawer .resizer {
+  background: rgba(200,200,200,.5);
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  right: 20px;
+  transform: translateY(-50%);
+  text-align: center;
+}
+
+.Circle-Drawer .buttons {
+  margin: auto;
+  width: max-content;
+}
+
+.Circle-Drawer svg {
+  background: white;
+  width: 100%;
+  height: 100%;
+}
+
+.Circle-Drawer circle:hover {
+  fill: #eee;
+}
