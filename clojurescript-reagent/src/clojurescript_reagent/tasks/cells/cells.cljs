@@ -28,24 +28,37 @@
       (= direction "after") (nth vec (inc idx) nil)
       :else nil)))
 
-(def shape '(100 100))
-(def dat (r/atom sample-data))
-(def rows (vec (range (first shape))))
+(def shape '(50 50))
+
+(def rows (mapv str (range (first shape))))
 (def columns (vec (letter-range (second shape))))
+
+(def rows-data 
+  (apply hash-map (interleave rows (repeatedly #(r/atom {})))))
+(doseq [[k v] sample-data]
+  (swap! (get rows-data (first (re-seq #"\d+" (str k)))) assoc k (r/atom v)))
+
+(def dat (r/atom rows-data))
+
 (def focused (r/atom nil))
 (def t-body (atom nil))
-(def parser (Parser. (atom "") dat columns (mapv str rows)))
+(def parser (Parser. (atom "") dat columns rows))
 
 (defn create-new-cell [key]
   (if-not (contains? @dat key)
-    (swap! dat assoc key "")))
+    (swap! dat assoc key (r/atom ""))))
 
 (defn handle-focus [e c r]
   (let [key (keyword (str c r))
         input js/e.target]
-    (create-new-cell key)
+    
+    (let [row-data (get @dat r)
+          cell-data (get @row-data key)]
+      (if (nil? cell-data)
+        (swap! row-data assoc key (r/atom ""))))
+    
     (reset! focused key)
-    (js/setTimeout 
+    (js/setTimeout
      #(.setSelectionRange input 0 9999)
      10)))
 
@@ -53,7 +66,7 @@
   (reset! focused nil))
 
 (defn handle-change [e c r]
-  (swap! dat assoc (keyword (str c r)) js/e.target.value))
+  (reset! ((keyword (str c r)) @(get @dat r)) js/e.target.value))
 
 (defn handle-key-down [e c r]
   (let [selector
@@ -88,36 +101,38 @@
     (map (fn [column] [:td {:class "column-key"} column])
          columns))])
 
-(defn get-value [c r]
-  (let [key (keyword (str c r))]
-    (if (contains? @dat key)
-      (if (= @focused (keyword (str c r)))
-        (key @dat)
-        (parse parser (key @dat)))
-      "")))
+(defn get-val [cell-data c r]
+  (if (nil? cell-data)
+    ""
+    (if (= @focused (keyword (str c r)))
+      @cell-data
+      (parse parser @cell-data))))
 
-(defn render-cell [c r]
+(defn cell [c r cell-data]
   [:td {:id (str c r)}
    [:input {:id (str "input-" c r)
-            :value (str (get-value c r))
+            :value (str (get-val cell-data c r))
             :on-change #(handle-change % c r)
             :on-focus #(handle-focus % c r)
             :on-key-down #(handle-key-down % c r)
             :on-blur handle-blur}]])
 
-(defn render-row [r]  
-  (into [:tr {:id (str "row-" r)}
-         [:td {:class "row-key"} r]]
-        (map #(render-cell % r) columns)))
+(defn row [r row-data]
+  [:tr {:id (str "row-" r)}
+         [:td {:class "row-key"} r]
+   (doall
+    (for [c columns]
+      ^{:key (str c r)} [cell c r (get @row-data (keyword (str c r)) nil)]))])
 
 (defn cells []
-  (.log js/console "render")
   (card
    "Cells"
    [:<>
     [:div {:class "wrapper"}
      [:table
       [head]
-      (into [:tbody {:ref #(reset! t-body %)}]
-            (map render-row rows))]]
-    [:button {:on-click clear} "Clear"]]))
+      [:tbody {:ref #(reset! t-body %)}
+       (doall
+        (for [r rows]
+          ^{:key (str r)} [row r (get @dat r)]))]]]
+      [:button {:on-click clear} "Clear"]]))

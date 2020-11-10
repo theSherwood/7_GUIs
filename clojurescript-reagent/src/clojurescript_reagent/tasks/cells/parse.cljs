@@ -1,6 +1,5 @@
 (ns clojurescript-reagent.cells.parse
-  (:require [clojure.string :refer [lower-case upper-case split]]
-            [cljs.core :refer [clj->js]]))
+  (:require [clojure.string :refer [lower-case upper-case split]]))
 
 (defn exp [x n]
   (reduce * (repeat n x)))
@@ -36,6 +35,8 @@
 
 (defprotocol IParser
   (get-range [this start end])
+  (get-cell-contents [this key])
+  (cell-exists? [this key])
   (apply-to-range [this op start end])
   (apply-once [this op operand-1 operand-2])
   (parse-operand [this operand])
@@ -57,13 +58,23 @@
                    (second start)
                    (second end))]
       (cartesian-product letters numbers)))
+  (get-cell-contents
+   [this key]
+   (let [r (first (re-seq #"\d+" (str key)))
+         row-data (get @cells r)]
+     @(get @row-data key)))
+  (cell-exists?
+   [this key]
+   (let [r (first (re-seq #"\d+" (str key)))
+         row-data (get @cells r)]
+     (contains? @row-data key)))
   (apply-to-range
     [this op start end]
     (if (and (not (well-formed? start)) (well-formed? end))
       @current-string
       (let [range (get-range this start end)]
         (reduce (op operations)
-                (map #(js/Number (parse this ((keyword %) @cells)))
+                (map #(js/Number (parse this (get-cell-contents this (keyword %))))
                      range)))))
   (apply-once
     [this op operand-1 operand-2]
@@ -78,8 +89,8 @@
       (not (js/isNaN (js/Number operand)))
       (js/Number operand)
 
-      (contains? @cells (keyword operand))
-      (js/Number (parse this (get @cells (keyword operand))))
+      (cell-exists? this (keyword operand))
+      (js/Number (parse this (get-cell-contents this (keyword operand))))
 
       (well-formed? operand)
       0
@@ -118,4 +129,6 @@
                  snd (upper-case (subs formula 3))]
              (if (contains? operations fst)
                (parse-operation this fst snd)
-               (get (keyword formula) @cells contents))))))
+               (if (cell-exists? this (keyword formula))
+                 (get-cell-contents this (keyword formula))
+                 contents))))))
