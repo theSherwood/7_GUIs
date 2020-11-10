@@ -11,10 +11,10 @@
 (defn app []
   [:main {:class "App"}
    [:a {:href "../../../index.html"} "Home"]
-   [counter]
-   [temperature]
-   [flight]
-   [timer]
-   [crud]
-   [circle]
+  ;;  [counter]
+  ;;  [temperature]
+  ;;  [flight]
+  ;;  [timer]
+  ;;  [crud]
+  ;;  [circle]
    [cells]])

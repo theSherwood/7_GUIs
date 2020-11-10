@@ -2,7 +2,10 @@
      (:require [reagent.core :refer [atom]]
                [clojurescript-reagent.components.card :refer [card]]
                [clojurescript-reagent.cells.sample-data :refer [sample-data]]
+               [clojurescript-reagent.cells.parse :refer [Parser parse]]
                [utils.core :refer [log]]))
+
+(def ? #(do (.log js/console %) %))
 
 ; import { html, o } from "sinuous";
 ; import { sample } from "sinuous/observable";
@@ -56,6 +59,14 @@
 ;   return range(n).map(getNumberAsLetters);
 ; }
 
+(defn find-adjacent [vec value direction]
+  (.log js/console vec value direction)
+  (let [idx (.indexOf vec value)]
+    (cond
+      (= idx -1) nil
+      (= direction "before") (nth vec (dec idx) nil)
+      (= direction "after") (nth vec (inc idx) nil)
+      :else nil)))
 
 ; function findAdjacent(arr, value, direction) {
 ;   let index = arr.indexOf(value);
@@ -78,8 +89,8 @@
 (def dat (atom sample-data))
 (add-watch dat :logger #(log %4))
 
-(def rows (range (first shape)))
-(def columns (letter-range (second shape)))
+(def rows (vec (range (first shape))))
+(def columns (vec (letter-range (second shape))))
 
 ;   const dat = o(sampleData);
 ;   const rows = range(shape[1]);
@@ -91,11 +102,14 @@
 ; (add-watch focused :logger #(log %4))
 
 ;   let focused = o(undefined);
+
+(def t-body (atom nil))
 ;   let tBody; // Used as a ref
 
+(def parser (Parser. (atom "") dat columns rows))
+
 (defn create-new-cell [key]
-  (if (contains? @dat key)
-    ()
+  (if-not (contains? @dat key)
     (swap! dat assoc key "")))
 
 ;   function createNewCell(key) {
@@ -140,7 +154,30 @@
 ;   }
 
 (defn handle-key-down [e c r]
-  (log "handle-key-down" e c r))
+  (log "handle-key-down" e c r (.-key e) (.indexOf ["ArrowDown" "Enter"] (.-key e)))
+  (let [selector
+        (cond
+          (= (.-key e) "ArrowUp")
+          (let [new-row (find-adjacent rows r "before")]
+            (if-not (nil? new-row) (str c new-row)))
+
+          (not= -1 (.indexOf ["ArrowDown" "Enter"] (.-key e)))
+          (let [new-row (find-adjacent rows r "after")]
+            (.log js/console "here")
+            (if-not (nil? new-row) (str c new-row)))
+
+          (and (= (.-key e) "ArrowLeft") (.-altKey e))
+          (let [new-column (find-adjacent columns c "before")]
+            (if-not (nil? new-column) (str new-column r)))
+
+          (and (= (.-key e) "ArrowRight") (.-altKey e))
+          (let [new-column (find-adjacent columns c "after")]
+            (if-not (nil? new-column) (str new-column r))))]
+    (if selector 
+      (do
+        (.log js/console "selector" selector)
+        (.preventDefault e)
+        (.focus (.querySelector @t-body (str "#input-" selector)))))))
 
 ;   function handleKeydown(e, column, row) {
 ;     // Navigate across the spreadsheet with arrow keys (and alt/option key)
@@ -183,9 +220,27 @@
     (map (fn [column] [:td {:class "column-key"} column])
          columns))])
 
+(defn get-value [c r]
+  (let [key (keyword (str c r))]
+    (if (contains? @dat key)
+      (if (= @focused (str c r))
+        (key @dat)
+        ;; "foo")
+        (parse parser (key @dat)))
+      "")))
+
+;; value=${() => {
+  ;; return (j+i) in data()
+    ;; ? focused() === j + i
+      ;; ? data()[j + i]()
+      ;; : p.parse(data()[j + i]())
+    ;; : "";
+;; }}
+
 (defn render-cell [c r]
   [:td {:id (str c r)}
    [:input {:id (str "input-" c r)
+            :value (get-value c r)
             :on-change #(handle-change % c r)
             :on-focus #(handle-focus % c r)
             :on-key-down #(handle-key-down % c r)
@@ -203,7 +258,7 @@
     [:div {:class "wrapper"}
      [:table
       [head]
-      (into [:tbody]
+      (into [:tbody {:ref #(reset! t-body %)}]
             (map render-row rows))]]
     [:button {:on-click clear} "Clear"]]))
 

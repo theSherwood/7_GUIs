@@ -1,16 +1,18 @@
-(ns clojurescript-reagent.cells.parse)
+(ns clojurescript-reagent.cells.parse
+  (:require [clojure.string :refer [lower-case upper-case split]]
+            [cljs.core :refer [clj->js]]))
 
 ; import {subscribe} from 'sinuous/observable'
 
-(defn exp [n m]
-  (loop [r (range m)
-         v 1]
-    (if (empty? r)
-      v
-      (recur (rest r) (* v n)))))
+(def ? #(do (.log js/console %) %))
 
-(def columns (atom nil))
-(def rows (atom nil))
+(defn exp [x n]
+  (reduce * (repeat n x)))
+
+;; (def current-string (atom ""))
+;; (def cells (atom {}))
+;; (def columns (atom nil))
+;; (def rows (atom nil))
 (def operations 
   {:sum +
    :sub -
@@ -19,6 +21,65 @@
    :mod mod
    :exp exp
    })
+
+(defn includes [coll x]
+  (not= (.indexOf coll x) -1))
+
+
+(defn cartesian-product [letters, numbers]
+  (for [c letters r numbers] (str c r)))
+
+;   cartesianProduct(letters, numbers) {
+;     var result = []
+;     letters.forEach(letter => {
+;       numbers.forEach(number => {
+;         result.push(letter + number)
+;       })
+;     })
+;     return result
+;   }
+
+(defn find-vec-range [vec start end]
+  (let [start-idx (.indexOf vec start)
+        end-idx (.indexOf vec end)]
+    (if (or (= start-idx -1) (= end-idx -1) (> start-idx end-idx))
+      []
+      (subvec vec start-idx (inc end-idx)))))
+
+;   findArrRange(arr, start, end) {
+;     let startI = arr.indexOf(start)
+;     let endI = arr.indexOf(end)
+;     if (startI == -1 || endI == -1 || startI > endI) return []
+;     return arr.slice(startI, endI + 1)
+;   }
+
+(defn split-operand [operand]
+  (let [op (str operand)]
+    [(first (re-seq #"[a-zA-Z]+" op)) (first (re-seq #"\d+" op))]))
+
+;   splitOperand(operand) {
+;     return [operand.match(/[a-zA-Z]+/)[0], Number(operand.match(/\d+/)[0])]
+;   }
+
+
+(defn well-formed? [operand]
+    (not (nil? (re-find #"[a-zA-Z]+\d+" operand))))
+
+;   isWellFormed(operand) {
+;     return /[a-zA-Z]+\d+/.test(operand)
+;   }
+   
+
+(defprotocol IParser
+  (get-range [this start end])
+  ;; (find-vec-range [op start end])
+  (apply-to-range [this op start end])
+  (apply-once [this op operand-1 operand-2])
+  (parse-operand [this operand])
+  (parse-operation [this op formula])
+  (parse [this string]))
+
+(defrecord Parser [current-string cells columns rows]
 
 ; export class Parser {
 ;   constructor(store, columns, rows) {
@@ -37,26 +98,27 @@
 
 ;     subscribe(() => this.cells = this.store())
 ;   }
+  
+  
+  
+  
+  IParser
 
-(defn product [letters, numbers]
-  )
+  (get-range
+    [this start end]
+    (let [start (split-operand start)
+          end (split-operand end)
+          letters (find-vec-range
+                   columns
+                   (first start)
+                   (first end))
+          numbers (find-vec-range
+                   rows
+                   (second start)
+                   (second end))]
+      (cartesian-product letters numbers)))
 
-;   cartesianProduct(letters, numbers) {
-;     var result = []
-;     letters.forEach(letter => {
-;       numbers.forEach(number => {
-;         result.push(letter + number)
-;       })
-;     })
-;     return result
-;   }
 
-;   findArrRange(arr, start, end) {
-;     let startI = arr.indexOf(start)
-;     let endI = arr.indexOf(end)
-;     if (startI == -1 || endI == -1 || startI > endI) return []
-;     return arr.slice(startI, endI + 1)
-;   }
 
 ;   getRange(rangeStart, rangeEnd) {
 ;     rangeStart = this.splitOperand(rangeStart)
@@ -66,9 +128,16 @@
 ;     return this.cartesianProduct(letters, numbers)
 ;   }
 
-;   splitOperand(operand) {
-;     return [operand.match(/[a-zA-Z]+/)[0], Number(operand.match(/\d+/)[0])]
-;   }
+
+
+  (apply-to-range
+   [this op start end]
+   (if (and (not (well-formed? start)) (well-formed? end))
+     @current-string
+     (let [range (get-range this start end)]
+       (reduce (op operations)
+               (map #(parse this (? (% @cells)))
+                    range)))))
 
 ;   rangeOperation(op, rangeStart, rangeEnd) {
 ;     if (!(this.isWellFormed(rangeStart) && this.isWellFormed(rangeEnd)))
@@ -81,6 +150,14 @@
 ;       .reduce(this.operations[op])
 ;   }
 
+  (apply-once
+    [this op operand-1 operand-2]
+    (let [fst (parse-operand this operand-1)
+          snd (parse-operand this operand-2)]
+      (if (or (nil? fst) (nil? snd))
+        @current-string
+        ((get operations op) fst snd))))
+
 ;   singleOperation(op, operand1, operand2) {
 ;     let first = this.parseOperand(operand1)
 ;     let second = this.parseOperand(operand2)
@@ -90,9 +167,13 @@
 ;     return this.operations[op](first, second).toString()
 ;   }
 
-;   isWellFormed(operand) {
-;     return /[a-zA-Z]+\d+/.test(operand)
-;   }
+  (parse-operand
+    [this operand]
+    (cond
+      (number? operand) operand
+      (contains? @cells operand) (parse this (get @cells operand))
+      (well-formed? operand) 0
+      :else nil))
 
 ;   parseOperand(operand) {
 ;     if (!isNaN(Number(operand))) return Number(operand)
@@ -101,6 +182,29 @@
 
 ;     return null
 ;   }
+  
+  (parse-operation
+    [this op formula]
+    (if (not (and (= (first formula) \() (= (last formula) \))))
+      @current-string
+      (let [formula (subs formula 1 (dec (count formula)))]
+        (if (includes formula ",")
+          (let [formula-coll (split formula #",")]
+            (if (not= (count formula-coll) 2)
+              @current-string
+              (apply-once this
+                          op
+                          (first formula-coll)
+                          (second formula-coll))))
+          (if (includes formula ":")
+            (let [formula-coll (split formula #":")]
+              (if (not= (count formula-coll) 2)
+                @current-string
+                (apply-to-range this
+                                op
+                                (first formula-coll)
+                                (second formula-coll))))
+            @current-string)))))
 
 ;   parseOperation(op, formula) {
 ;     if (!(formula.startsWith('(') && formula.endsWith(')')))
@@ -129,6 +233,20 @@
 ;     return this.originalString
 ;   }
 
+  (parse
+    [this contents]
+    (do
+      (reset! current-string contents)
+      (cond
+        (not (string? contents)) ""
+        (not (= (first contents) \=)) contents
+        :else (let [formula (subs contents 1)
+                    fst (keyword (lower-case (subs formula 0 3)))
+                    snd (upper-case (subs formula 3))]
+                (if (contains? operations fst)
+                  (parse-operation this fst snd)
+                  (get (keyword formula) @cells contents))))))
+
 ;   parse(str) {
 ;     this.originalString = str
 ;     if (typeof str !== 'string') return ''
@@ -145,3 +263,4 @@
 ;     }
 ;   }
 ; }
+    )
