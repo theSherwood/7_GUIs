@@ -1,7 +1,7 @@
 (ns clojurescript-reagent.circle
   (:require [reagent.core :as reagent :refer [atom]]
             [clojure.string :as string]
-            [clojurescript-reagent.components.card :refer [card]]))
+            [clojurescript-reagent.components.card :as card]))
 
 (def BASE_RADIUS 30)
 
@@ -82,15 +82,15 @@
             :on-click (fn [e] (.preventDefault e) (.stopPropagation e)) 
             :on-context-menu handle-right-click}])
 
-(defn circle []
-  (card
+(defn main []
+  [card/main
    "Circle Drawer"
    [:div {:class "wrapper"}
     [:div {:class "buttons"}
      [:button {:on-click undo
                :disabled (= @step 0)} "Undo"]
-     [:button {:on-click redo 
+     [:button {:on-click redo
                :disabled (= @step (- (count @snapshots) 1))} "Redo"]]
     [:div {:class "canvas"}
      (into [:svg {:on-click add-circle}] (map circle-svg @present))]
-    (and @resizing (overlay))]))
+    (and @resizing (overlay))]])

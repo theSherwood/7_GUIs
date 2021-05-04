@@ -1,7 +1,7 @@
 (ns clojurescript-reagent.flight
   (:require [reagent.core :as reagent :refer [atom]]
             [clojure.string :as string]
-            [clojurescript-reagent.components.card :refer [card]]))
+            [clojurescript-reagent.components.card :as card]))
 
 (defn as-date [date-string]
   (let [date-vec (reverse (string/split date-string #"[.]"))]
@@ -50,8 +50,8 @@
                    (index flight-map) 
                    (index time-strings)))))
 
-(defn flight []
-  (card
+(defn main []
+  [card/main
    "Flight Booker"
    [:div
     [:select {:value @flight-type :on-change (fn [e] (reset! flight-type js/e.target.value))}
@@ -60,10 +60,10 @@
     [:input {:value @start-date
              :class (if (@errors :1) "error" "")
              :on-change (fn [e] (reset! start-date js/e.target.value))}]
-    [:input {:value @return-date 
+    [:input {:value @return-date
              :class (if (@errors :2) "error" "")
-             :on-change (fn [e] (reset! return-date js/e.target.value)) 
+             :on-change (fn [e] (reset! return-date js/e.target.value))
              :disabled (= @flight-type :1)}]
-    [:button {:on-click book 
-              :disabled (or (@errors :1) (@errors :2) (@errors :3))} 
-     "Book"]]))
+    [:button {:on-click book
+              :disabled (or (@errors :1) (@errors :2) (@errors :3))}
+     "Book"]]])

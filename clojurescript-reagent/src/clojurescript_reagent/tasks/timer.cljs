@@ -1,6 +1,6 @@
 (ns clojurescript-reagent.timer
   (:require [reagent.core :as reagent :refer [atom]]
-            [clojurescript-reagent.components.card :refer [card]]))
+            [clojurescript-reagent.components.card :as card]))
 
 (def MAX 30000)
 
@@ -21,14 +21,14 @@
 
 (start-timer)
 
-(defn timer []
-  (card
+(defn main []
+  [card/main
    "Timer"
    [:div {:class "wrapper"}
     "Elapsed Time:"
     [:progress {:value (/ (- @now @start) @duration)}]
     [:div {:class "duration"} (.toFixed (/ @duration 1000) 1)]
     "Duration"
-    [:input {:type "range" :min 0 :max MAX :value @duration 
+    [:input {:type "range" :min 0 :max MAX :value @duration
              :on-change (fn [e] (reset! duration js/e.target.value))}]
-    [:button {:on-click start-timer} "Reset Timer"]]))
+    [:button {:on-click start-timer} "Reset Timer"]]])

@@ -1,7 +1,7 @@
 (ns clojurescript-reagent.crud
   (:require [reagent.core :as reagent :refer [atom]]
             [clojure.string :as string]
-            [clojurescript-reagent.components.card :refer [card]]))
+            [clojurescript-reagent.components.card :as card]))
 
 (defonce prefix (atom ""))
 (defonce entries ( atom ['("Paul" "Atreides")
@@ -40,13 +40,13 @@
             (vec (concat (subvec @entries 0 @selected) 
                          (subvec @entries (inc @selected)))))))
 
-(defn crud []
-  (card
+(defn main []
+  [card/main
    "CRUD"
    [:div {:class "wrapper"}
     "Filter prefix: "
     [:input {:value @prefix :on-change (fn [e] (reset! prefix js/e.target.value))}]
-    (into [:select {:size "4" :value @selected }] @filtered-entries)
+    (into [:select {:size "4" :value @selected}] @filtered-entries)
     [:div
      "Name: "
      [:input {:value @first-name :on-change (fn [e] (reset! first-name js/e.target.value))}]
@@ -55,4 +55,4 @@
     [:div {:class "buttons"}
      [:button {:on-click add-entry} "Create"]
      [:button {:on-click update-entry} "Update"]
-     [:button {:on-click delete-entry} "Delete"]]]))
+     [:button {:on-click delete-entry} "Delete"]]]])

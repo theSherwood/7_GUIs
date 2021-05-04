@@ -1,7 +1,7 @@
 (ns clojurescript-reagent.temperature
   (:require [reagent.core :as reagent :refer [atom]]
             [clojure.string :as string]
-            [clojurescript-reagent.components.card :refer [card]]))
+            [clojurescript-reagent.components.card :as card]))
 
 (defonce c (atom "0"))
 (defonce f (atom "32"))
@@ -38,12 +38,12 @@
       (reset! f val)
       (reset! c (get-c val)))))
 
-(defn temperature []
-  (card
+(defn main []
+  [card/main
    "Temperature Converter"
-   [:<> 
-    [:span [:input 
+   [:<>
+    [:span [:input
             {:value @c :on-change update-c}] " Celsius"]
     "="
-    [:span [:input 
-            {:value @f :on-change update-f}] " Fahrenheit"]]))
+    [:span [:input
+            {:value @f :on-change update-f}] " Fahrenheit"]]])
