@@ -1,11 +1,10 @@
 (ns clojurescript-reagent.counter
-  (:require [reagent.core :as reagent :refer [atom]]
-            [clojurescript-reagent.components.card :refer [card]]))
+  (:require [reagent.core :as r]
+            [clojurescript-reagent.components.card :as card]))
 
-(defonce click-count (atom 0))
-
-(defn counter []
-  (card 
-   "Counter"
-   [:<> @click-count
-    [:button {:on-click #(swap! click-count inc)} "+"]]))
+(defn main []
+  (r/with-let [*count (r/atom 0)]
+    [card/main
+     "Counter"
+     [:<> @*count
+      [:button {:on-click #(swap! *count inc)} "+"]]]))

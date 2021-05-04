@@ -1,20 +1,22 @@
 (ns clojurescript-reagent.app
   (:require
-   [clojurescript-reagent.counter :refer [counter]]
-   [clojurescript-reagent.temperature :refer [temperature]]
-   [clojurescript-reagent.flight :refer [flight]]
-   [clojurescript-reagent.timer :refer [timer]]
-   [clojurescript-reagent.crud :refer [crud]]
-   [clojurescript-reagent.circle :refer [circle]]
-   [clojurescript-reagent.cells :refer [cells]]))
+   [clojurescript-reagent.counter :as counter]
+  ;;  [clojurescript-reagent.temperature :as temperature]
+  ;;  [clojurescript-reagent.flight :as flight]
+  ;;  [clojurescript-reagent.timer :as timer]
+  ;;  [clojurescript-reagent.crud :as crud]
+  ;;  [clojurescript-reagent.circle :as circle]
+  ;;  [clojurescript-reagent.cells :as cells]
+   ))
 
 (defn app []
   [:main {:class "App"}
    [:a {:href "../../../index.html"} "Home"]
-   [counter]
-   [temperature]
-   [flight]
-   [timer]
-   [crud]
-   [circle]
-   [cells]])
+   [counter/main]
+  ;;  [temperature/main]
+  ;;  [flight/main]
+  ;;  [timer/main]
+  ;;  [crud/main]
+  ;;  [circle/main]
+  ;;  [cells/main]
+   ])

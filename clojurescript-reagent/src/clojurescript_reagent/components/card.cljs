@@ -1,7 +1,9 @@
-(ns clojurescript-reagent.components.card)
+(ns clojurescript-reagent.components.card
+  (:require
+   [clojure.string :refer [replace]]))
 
-(defn card [child-title children]
-  (let [title (clojure.string/replace child-title #" " "-")]
+(defn main [child-title children]
+  (let [title (replace child-title #" " "-")]
    [:section {:class (str "Card " title)}
     [:h2 child-title]
     children]))
