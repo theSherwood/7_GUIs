@@ -10,8 +10,7 @@
    :mul *
    :div /
    :mod mod
-   :exp exp
-   })
+   :exp exp})
 
 (defn includes [coll x]
   (not= (.indexOf coll x) -1))
@@ -31,104 +30,83 @@
     [(first (re-seq #"[a-zA-Z]+" op)) (first (re-seq #"\d+" op))]))
 
 (defn well-formed? [operand]
-    (not (nil? (re-find #"[a-zA-Z]+\d+" operand)))) 
+    (not (nil? (re-find #"[a-zA-Z]+\d+" operand))))
 
-(defprotocol IParser
-  (get-range [this start end])
-  (get-cell-contents [this key])
-  (cell-exists? [this key])
-  (apply-to-range [this op start end])
-  (apply-once [this op operand-1 operand-2])
-  (parse-operand [this operand])
-  (parse-operation [this op formula])
-  (parse [this contents]))
+(defn get-range [start end rows columns]
+ (let [start (split-operand start)
+       end (split-operand end)
+       letters (find-vec-range
+                columns
+                (first start)
+                (first end))
+       numbers (find-vec-range
+                rows
+                (second start)
+                (second end))]
+   (cartesian-product letters numbers)))
 
-(defrecord Parser [current-string cells columns rows]
-  IParser
-  (get-range
-    [this start end]
-    (let [start (split-operand start)
-          end (split-operand end)
-          letters (find-vec-range
-                   columns
-                   (first start)
-                   (first end))
-          numbers (find-vec-range
-                   rows
-                   (second start)
-                   (second end))]
-      (cartesian-product letters numbers)))
-  (get-cell-contents
-   [this key]
-   (let [r (first (re-seq #"\d+" (str key)))
-         row-data (get @cells r)]
-     @(get @row-data key)))
-  (cell-exists?
-   [this key]
-   (let [r (first (re-seq #"\d+" (str key)))
-         row-data (get @cells r)]
-     (contains? @row-data key)))
-  (apply-to-range
-    [this op start end]
-    (if (and (not (well-formed? start)) (well-formed? end))
-      @current-string
-      (let [range (get-range this start end)]
-        (reduce (op operations)
-                (map #(js/Number (parse this (get-cell-contents this (keyword %))))
-                     range)))))
-  (apply-once
-    [this op operand-1 operand-2]
-    (let [fst (parse-operand this operand-1)
-          snd (parse-operand this operand-2)]
-      (if (or (nil? fst) (nil? snd))
-        @current-string
-        ((get operations op) fst snd))))
-  (parse-operand
-    [this operand]
-    (cond
-      (not (js/isNaN (js/Number operand)))
-      (js/Number operand)
+(defn cell? [string rows columns]
+  (if (well-formed? string)
+    (let [[fst snd] (split-operand string)]
+      (and (some #(= % snd) rows)
+           (some #(= % fst) columns)))
+    false))
 
-      (cell-exists? this (keyword operand))
-      (js/Number (parse this (get-cell-contents this (keyword operand))))
-
-      (well-formed? operand)
-      0
-
-      :else nil))
-  (parse-operation
-    [this op formula]
-    (if (not (and (= (first formula) \() (= (last formula) \))))
-      @current-string
+(defn parse-formula [{:keys [string op formula rows columns]}]
+  (let [string-map {:string string
+                    :type :string}]
+    (if-not (and (= (first formula) \()
+                 (= (last formula) \)))
+      string-map
       (let [formula (subs formula 1 (dec (count formula)))]
         (if (includes formula ",")
           (let [formula-coll (split formula #",")]
             (if (not= (count formula-coll) 2)
-              @current-string
-              (apply-once this
-                          op
-                          (first formula-coll)
-                          (second formula-coll))))
+              string-map
+              (let [fst (first formula-coll)
+                    snd (second formula-coll)]
+                (if (and (cell? fst rows columns)
+                         (cell? snd rows columns))
+                  {:string string
+                   :type :op
+                   :op (operations op)
+                   :cells [fst snd]}
+                  string-map))))
           (if (includes formula ":")
             (let [formula-coll (split formula #":")]
               (if (not= (count formula-coll) 2)
-                @current-string
-                (apply-to-range this
-                                op
-                                (first formula-coll)
-                                (second formula-coll))))
-            @current-string)))))
-  (parse
-   [this contents]
-   (reset! current-string contents)
-   (cond
-     (not (string? contents)) ""
-     (not (= (first contents) \=)) contents
-     :else (let [formula (subs contents 1)
-                 fst (keyword (lower-case (subs formula 0 3)))
-                 snd (upper-case (subs formula 3))]
-             (if (contains? operations fst)
-               (parse-operation this fst snd)
-               (if (cell-exists? this (keyword formula))
-                 (get-cell-contents this (keyword formula))
-                 contents))))))
+                string-map
+                (let [fst (first formula-coll)
+                      snd (second formula-coll)]
+                  (if (and (cell? fst rows columns)
+                           (cell? snd rows columns))
+                    {:string string
+                     :type :op
+                     :op (operations op)
+                     :cells (vec (get-range fst snd rows columns))}
+                    string-map))))
+            string-map))))))
+
+(defn parse-string [string rows columns]
+  (cond
+    (nil? string) {:type :string
+                   :string string}
+    (empty? string) {:type :string
+                     :string string}
+    (not (= (first string) \=)) {:type :string
+                                 :string string}
+    :else (let [formula (subs string 1)
+                fst (keyword (lower-case (subs formula 0 3)))
+                snd (upper-case (subs formula 3))]
+            (if (contains? operations fst)
+              (parse-formula {:string string
+                              :op fst
+                              :formula snd
+                              :rows rows
+                              :columns columns} )
+              (if (cell? formula rows columns)
+                {:string string
+                 :type   :cell
+                 :cell   formula}
+                {:string string
+                 :type   :string})))))

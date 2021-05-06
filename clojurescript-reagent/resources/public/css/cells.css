@@ -17,6 +17,13 @@
   height: 30px;
   border: solid 1px #ddd;
   overflow: hidden;
+  text-align: right;
+}
+
+.Cells td > div {
+  width: 100%;
+  max-width: 120px;
+  overflow: hidden
 }
 
 .Cells input {

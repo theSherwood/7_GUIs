@@ -1,8 +1,9 @@
 (ns clojurescript-reagent.cells
-     (:require [reagent.core :as r]
-               [clojurescript-reagent.components.card :refer [card]]
-               [clojurescript-reagent.cells.sample-data :refer [sample-data]]
-               [clojurescript-reagent.cells.parse :refer [Parser parse]]))
+  (:require
+   [reagent.core :as r]
+   [clojurescript-reagent.components.card :as card]
+   [clojurescript-reagent.cells.sample-data :refer [sample-data]]
+   [clojurescript-reagent.cells.parse :refer [parse-string]]))
 
 (def LETTERS "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
@@ -24,75 +25,81 @@
   (let [idx (.indexOf vec value)]
     (cond
       (= idx -1) nil
-      (= direction "before") (nth vec (dec idx) nil)
-      (= direction "after") (nth vec (inc idx) nil)
+      (= direction :before) (nth vec (dec idx) nil)
+      (= direction :after) (nth vec (inc idx) nil)
       :else nil)))
 
-(def shape '(50 50))
+(def shape [100 100])
 
 (def rows (mapv str (range (first shape))))
 (def columns (vec (letter-range (second shape))))
 
-(def rows-data 
-  (apply hash-map (interleave rows (repeatedly #(r/atom {})))))
-(doseq [[k v] sample-data]
-  (swap! (get rows-data (first (re-seq #"\d+" (str k)))) assoc k (r/atom v)))
+(def *cell-data (r/atom (into {}
+                              (map
+                               (fn [[k v]]
+                                 [k (parse-string v rows columns)])
+                               sample-data))))
 
-(def dat (r/atom rows-data))
+(def *cell-cache (atom {}))
 
-(def focused (r/atom nil))
+(declare resolve-cells)
+
+(defn compute-cell-value [cell cell-data *cell-cache]
+  (when-let [type (:type cell)]
+    (case type
+      :string (:string cell)
+      :cell   (resolve-cells [(:cell cell)] cell-data *cell-cache)
+      :op     (let [op (:op cell)]
+                (reduce op
+                        (map
+                         js/Number
+                         (resolve-cells (:cells cell) cell-data *cell-cache)))))))
+
+(defn resolve-cells [cell-ids cell-data *cell-cache]
+  ;; The cell-ids will be valid
+  (let [cell-cache @*cell-cache]
+    (reduce
+     (fn [acc cell-id]
+       (if-let [cell-value (cell-cache cell-id)]
+         (conj acc cell-value)
+         (let [cell-value (compute-cell-value
+                           (cell-data cell-id) cell-data *cell-cache)]
+           (swap! *cell-cache assoc cell-id cell-value)
+           (conj acc cell-value))))
+     []
+     cell-ids)))
+
 (def t-body (atom nil))
-(def parser (Parser. (atom "") dat columns rows))
 
-(defn create-new-cell [key]
-  (if-not (contains? @dat key)
-    (swap! dat assoc key (r/atom ""))))
-
-(defn handle-focus [e c r]
-  (let [key (keyword (str c r))
-        input js/e.target]
-    
-    (let [row-data (get @dat r)
-          cell-data (get @row-data key)]
-      (if (nil? cell-data)
-        (swap! row-data assoc key (r/atom ""))))
-    
-    (reset! focused key)
-    (js/setTimeout
-     #(.setSelectionRange input 0 9999)
-     10)))
-
-(defn handle-blur []
-  (reset! focused nil))
-
-(defn handle-change [e c r]
-  (reset! ((keyword (str c r)) @(get @dat r)) js/e.target.value))
+(defn handle-change [e *cell]
+  (reset! *cell-cache {})
+  (reset! *cell (parse-string (.. e -target -value) rows columns)))
 
 (defn handle-key-down [e c r]
   (let [selector
         (cond
           (= (.-key e) "ArrowUp")
-          (let [new-row (find-adjacent rows r "before")]
+          (let [new-row (find-adjacent rows r :before)]
             (if-not (nil? new-row) (str c new-row)))
 
           (not= -1 (.indexOf ["ArrowDown" "Enter"] (.-key e)))
-          (let [new-row (find-adjacent rows r "after")]
+          (let [new-row (find-adjacent rows r :after)]
             (if-not (nil? new-row) (str c new-row)))
 
           (and (= (.-key e) "ArrowLeft") (.-altKey e))
-          (let [new-column (find-adjacent columns c "before")]
+          (let [new-column (find-adjacent columns c :before)]
             (if-not (nil? new-column) (str new-column r)))
 
           (and (= (.-key e) "ArrowRight") (.-altKey e))
-          (let [new-column (find-adjacent columns c "after")]
+          (let [new-column (find-adjacent columns c :after)]
             (if-not (nil? new-column) (str new-column r))))]
-    (if selector 
+    (if selector
       (do
         (.preventDefault e)
-        (.focus (.querySelector @t-body (str "#input-" selector)))))))
+        (.focus (.querySelector @t-body (str "#cell-" selector)))))))
 
 (defn clear []
-  (reset! dat {}))
+  (reset! *cell-data {}))
 
 (defn head []
   [:thead
@@ -101,31 +108,53 @@
     (map (fn [column] [:td {:class "column-key"} column])
          columns))])
 
-(defn get-val [cell-data c r]
-  (if (nil? cell-data)
-    ""
-    (if (= @focused (keyword (str c r)))
-      @cell-data
-      (parse parser @cell-data))))
+(defn input [{:keys [c r *focused *cell]}]
+  (let [cell @*cell]
+    [:input {:id (str "cell-" c r)
+             :auto-focus true
+             :value (or (:string cell) "")
+             :on-change #(handle-change % *cell)
+             :on-focus #(reset! *focused true)
+             :on-key-down #(handle-key-down % c r)
+             :on-blur #(reset! *focused false)}]))
 
-(defn cell [c r cell-data]
-  [:td {:id (str c r)}
-   [:input {:id (str "input-" c r)
-            :value (str (get-val cell-data c r))
-            :on-change #(handle-change % c r)
-            :on-focus #(handle-focus % c r)
-            :on-key-down #(handle-key-down % c r)
-            :on-blur handle-blur}]])
+(defn computed-string [cell]
+  ;; We put this in its own fn so that we get the reactive barrier between this
+  ;; computation and the rest of the component
+  (str (compute-cell-value cell @*cell-data *cell-cache)))
 
-(defn row [r row-data]
-  [:tr {:id (str "row-" r)}
-         [:td {:class "row-key"} r]
-   (doall
-    (for [c columns]
-      ^{:key (str c r)} [cell c r (get @row-data (keyword (str c r)) nil)]))])
+(defn cell-view [c r]
+  (r/with-let
+    [cell-id  (str c r)
+     input-id (str "cell-" c r)
+     *focused (r/atom false)
+     _ (add-watch *focused :set-selection
+                  (fn [_ _ o n]
+                    (if (and (not o) n)
+                      (js/setTimeout
+                       (fn []
+                         (let [target-input (.querySelector @t-body 
+                                                            (str "#" input-id))]
+                           (.. target-input (setSelectionRange 0 99999))))
+                       10))))
+     *cell    (r/cursor *cell-data [cell-id])]
+    (let [cell @*cell
+          string-type? (= :string (:type cell :string))]
+      [:td {:id cell-id
+            :on-click #(reset! *focused true)}
+       (if @*focused
+         [input {:c c :r r :*cell *cell :*focused *focused}]
+         [:div {:id input-id
+                :tabIndex 0
+                :on-focus #(reset! *focused true)}
+          (if string-type?
+           ;; Just render the string from the cell
+            (:string cell)
+           ;; Compute the string to display from *cell-data and *cell-cache
+            [computed-string cell])])])))
 
-(defn cells []
-  (card
+(defn main []
+  [card/main
    "Cells"
    [:<>
     [:div {:class "wrapper"}
@@ -134,5 +163,11 @@
       [:tbody {:ref #(reset! t-body %)}
        (doall
         (for [r rows]
-          ^{:key (str r)} [row r (get @dat r)]))]]]
-      [:button {:on-click clear} "Clear"]]))
+          ^{:key r}
+          [:tr {:id (str "row-" r)}
+           [:td {:class "row-key"} r]
+           (doall
+            (for [c columns]
+              ^{:key (str c r)}
+              [cell-view c r]))]))]]]
+    [:button {:on-click clear} "Clear"]]])
