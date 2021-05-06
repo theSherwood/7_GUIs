@@ -6,7 +6,7 @@
    [clojurescript-reagent.timer :as timer]
    [clojurescript-reagent.crud :as crud]
    [clojurescript-reagent.circle :as circle]
-  ;;  [clojurescript-reagent.cells :as cells]
+   [clojurescript-reagent.cells :as cells]
    ))
 
 (defn app []
@@ -18,5 +18,4 @@
    [timer/main]
    [crud/main]
    [circle/main]
-  ;;  [cells/main]
-   ])
+   [cells/main]])
