@@ -27,21 +27,21 @@
      *f (r/atom "32")
      _ (set-validator! *c #(is-valid? %))
      _ (set-validator! *f #(is-valid? %))
-     update-c (fn update-c [e]
-                (let [val (remove-0 (.. e -target -value))]
-                  (do
-                    (reset! *c val)
-                    (reset! *f (get-f val)))))
-     update-f (fn update-f [e]
-                (let [val (remove-0 (.. e -target -value))]
-                  (do
-                    (reset! *f val)
-                    (reset! *c (get-c val)))))]
+     update-c! (fn update-c! [e]
+                 (let [val (remove-0 (.. e -target -value))]
+                   (do
+                     (reset! *c val)
+                     (reset! *f (get-f val)))))
+     update-f! (fn update-f! [e]
+                 (let [val (remove-0 (.. e -target -value))]
+                   (do
+                     (reset! *f val)
+                     (reset! *c (get-c val)))))]
     [card/main
      "Temperature Converter"
      [:<>
       [:span [:input
-              {:value @*c :on-change update-c}] " Celsius"]
+              {:value @*c :on-change update-c!}] " Celsius"]
       "="
       [:span [:input
-              {:value @*f :on-change update-f}] " Fahrenheit"]]]))
+              {:value @*f :on-change update-f!}] " Fahrenheit"]]]))
