@@ -23,7 +23,8 @@
 .Cells td > div {
   width: 100%;
   max-width: 120px;
-  overflow: hidden
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .Cells input {
