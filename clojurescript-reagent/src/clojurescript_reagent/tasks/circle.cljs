@@ -1,6 +1,5 @@
 (ns clojurescript-reagent.circle
   (:require [reagent.core :as reagent :refer [atom]]
-            [clojure.string :as string]
             [clojurescript-reagent.components.card :as card]))
 
 (def BASE_RADIUS 30)
@@ -31,19 +30,19 @@
 (defn handle-right-click [e]
   (.preventDefault e) 
   (.stopPropagation e)
-  (let [circle js/e.target]
-    (reset! resizing {:x js/circle.cx.baseVal.value
-                      :y js/circle.cy.baseVal.value
-                      :r js/circle.r.baseVal.value})
-    (reset! radius js/circle.r.baseVal.value)))
+  (let [circle (.. e -target)]
+    (reset! resizing {:x (.. circle -cx -baseVal -value)
+                      :y (.. circle -cy -baseVal -value)
+                      :r (.. circle -r -baseVal -value)})
+    (reset! radius (.. circle -r -baseVal -value))))
 
 (defn add-snapshot [new-snapshot]
   (reset! snapshots (conj (subvec @snapshots 0 (inc @step)) new-snapshot))
   (swap! step inc))
 
 (defn add-circle [e]
-    (let [x js/e.nativeEvent.layerX
-          y js/e.nativeEvent.layerY]
+    (let [x (.. e -nativeEvent -layerX)
+          y (.. e -nativeEvent -layerY)]
       (add-snapshot (conj (@snapshots @step) {:x x :y y :r BASE_RADIUS}))))
 
 (defn undo []
@@ -71,7 +70,8 @@
              :min 0 
              :max 100 
              :value @radius 
-             :on-change (fn [e] (reset! radius (js/Number js/e.target.value)))}]]])
+             :on-change (fn [e] (reset! radius 
+                                        (js/Number (.. e -target -value))))}]]])
 
 (defn circle-svg [cir]
   [:circle {:cx (:x cir)
