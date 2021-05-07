@@ -66,10 +66,11 @@
       [:select {:size "4" :value @*selected}
        (doall
         (for [[fst lst id] @*filtered-entries]
+          ^{:key id}
           [:option
            {:value id
             :on-click #(reset! *selected id)}
-           lst ", " fst "-" @*selected]))]
+           lst ", " fst]))]
       [:div
        "Name: "
        [:input {:value @*first-name
