@@ -16,6 +16,9 @@
    [temperature/main]
    [flight/main]
    [timer/main]
-   [crud/main]
+   [crud/main [["Paul" "Atreides"]
+               ["Gurney" "Halleck"]
+               ["Duncan" "Idaho"]]]
    [circle/main]
-   [cells/main]])
+   [cells/main]
+   ])

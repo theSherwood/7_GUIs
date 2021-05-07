@@ -1,58 +1,83 @@
 (ns clojurescript-reagent.crud
-  (:require [reagent.core :as reagent :refer [atom]]
+  (:require [reagent.core :as r]
+            [reagent.ratom :as ratom]
             [clojure.string :as string]
             [clojurescript-reagent.components.card :as card]))
 
-(defonce prefix (atom ""))
-(defonce entries ( atom ['("Paul" "Atreides")
-                     '("Gurney" "Halleck")
-                     '("Duncan" "Idaho")]))
-(defonce filtered-entries (atom ()))
-(defonce first-name (atom ""))
-(defonce surname (atom ""))
-(defonce selected (atom -1))
+(defn filter-entries [entries prefix]
+  (filterv #(string/starts-with?
+            (string/lower-case (second %))
+            (string/lower-case prefix))
+          entries))
 
-(defn filter-entries []
-  (reset! filtered-entries
-          (->> @entries
-               (map-indexed (fn [idx entry] (list (first entry) (second entry) idx)))
-               (filter #(string/starts-with?
-                         (string/lower-case (second %))
-                         (string/lower-case @prefix)))
-               (map #(identity [:option {:value (nth % 2)
-                                         :on-click (fn [] (reset! selected (nth % 2)))}
-                                (second %) ", " (first %)])))))
+(defn find-index-of [pred items]
+  (first (keep-indexed #(if (pred %2) %1) items)))
 
-(filter-entries)
+(defn main [entries]
+  (r/with-let
+    [*prefix          (r/atom "")
+     *entries         (r/atom (mapv
+                               (fn [[fst snd]] [fst snd (random-uuid)])
+                               entries))
+     *filtered-entries (ratom/reaction (filter-entries @*entries @*prefix))
+     *first-name       (r/atom "")
+     *surname          (r/atom "")
 
-(add-watch prefix :clear-selected #(reset! selected -1))
-(add-watch prefix :filter-entries filter-entries)
-(add-watch entries :filter-entries filter-entries)
+     *selected         (r/atom nil)
+     resolve-selected  #(or @*selected (nth (first @*filtered-entries) 2 nil))
 
-(defn add-entry []
-  (swap! entries conj (list @first-name @surname)))
-(defn update-entry []
-  (if (> @selected -1)
-    (swap! entries assoc @selected (list @first-name @surname))))
-(defn delete-entry []
-  (if (> @selected -1)
-    (reset! entries 
-            (vec (concat (subvec @entries 0 @selected) 
-                         (subvec @entries (inc @selected)))))))
+     _ (add-watch *prefix :set-selected
+                  #(reset! *selected 
+                           (nth (first (filter-entries @*entries %4)) 2)))
 
-(defn main []
-  [card/main
-   "CRUD"
-   [:div {:class "wrapper"}
-    "Filter prefix: "
-    [:input {:value @prefix :on-change (fn [e] (reset! prefix js/e.target.value))}]
-    (into [:select {:size "4" :value @selected}] @filtered-entries)
-    [:div
-     "Name: "
-     [:input {:value @first-name :on-change (fn [e] (reset! first-name js/e.target.value))}]
-     "Surname: "
-     [:input {:value @surname :on-change (fn [e] (reset! surname js/e.target.value))}]]
-    [:div {:class "buttons"}
-     [:button {:on-click add-entry} "Create"]
-     [:button {:on-click update-entry} "Update"]
-     [:button {:on-click delete-entry} "Delete"]]]])
+     add-entry!    (fn add-entry! []
+                     (let [id (random-uuid)]
+                       (swap! *entries conj (vector @*first-name @*surname id))
+                       (reset! *selected id)))
+     update-entry! (fn update-entry! []
+                     (let [selected (resolve-selected)
+                           idx (find-index-of #(= selected (nth % 2)) @*entries)]
+                       (swap! *entries assoc idx (vector @*first-name @*surname selected))))
+     delete-entry! (fn delete-entry! []
+                     (let [selected (resolve-selected)
+                           entries  @*entries
+                           filtered-entries @*filtered-entries
+                           entries-idx (find-index-of #(= selected (nth % 2))
+                                                      entries)
+                           filtered-idx (find-index-of #(= selected (nth % 2))
+                                                       filtered-entries)]
+                       (reset! *entries
+                               (vec (concat (subvec entries 0 entries-idx)
+                                            (subvec entries (inc entries-idx)))))
+                       (if (= (nth (last filtered-entries) 2)
+                                selected)
+                         (reset! *selected
+                                 (nth (last (butlast filtered-entries)) 2))
+                         (reset! *selected
+                                 (nth 
+                                  (nth filtered-entries (inc filtered-idx))
+                                  2)))))]
+    [card/main
+     "CRUD"
+     [:div {:class "wrapper"}
+      "Filter prefix: "
+      [:input {:value @*prefix
+               :on-change (fn [e] (reset! *prefix (.. e -target -value)))}]
+      [:select {:size "4" :value @*selected}
+       (doall
+        (for [[fst lst id] @*filtered-entries]
+          [:option
+           {:value id
+            :on-click #(reset! *selected id)}
+           lst ", " fst "-" @*selected]))]
+      [:div
+       "Name: "
+       [:input {:value @*first-name
+                :on-change (fn [e] (reset! *first-name (.. e -target -value)))}]
+       "Surname: "
+       [:input {:value @*surname
+                :on-change (fn [e] (reset! *surname (.. e -target -value)))}]]
+      [:div {:class "buttons"}
+       [:button {:on-click add-entry!} "Create"]
+       [:button {:on-click update-entry!} "Update"]
+       [:button {:on-click delete-entry!} "Delete"]]]]))
