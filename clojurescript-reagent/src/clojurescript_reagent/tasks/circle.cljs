@@ -10,20 +10,23 @@
    [:div {:class "resizer"}
     [:p "Adjust radius of circle at " (:x @*resizing) ", " (:y @*resizing)]
     [:p @*radius]
-    [:input {:type "range" 
-             :min 0 
-             :max 100 
-             :value @*radius 
-             :on-change (fn [e] (reset! *radius 
-                                        (js/Number (.. e -target -value))))}]]])
+    [:input {:type       "range" 
+             :min        0 
+             :max        100 
+             :value      @*radius 
+             :on-change (fn [e]
+                          (reset! *radius
+                                  (js/Number (.. e -target -value))))}]]])
 
 (defn circle-svg [cir handle-right-click]
-  [:circle {:cx (:x cir)
-            :cy (:y cir)
-            :r (:r cir)
-            :fill "white" 
-            :stroke "black"
-            :on-click (fn [e] (.preventDefault e) (.stopPropagation e)) 
+  [:circle {:cx              (:x cir)
+            :cy              (:y cir)
+            :r               (:r cir)
+            :fill            "white" 
+            :stroke          "black"
+            :on-click        (fn [e] 
+                               (.preventDefault e)
+                               (.stopPropagation e)) 
             :on-context-menu handle-right-click}])
 
 (defn main []

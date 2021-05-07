@@ -89,8 +89,9 @@
                     (if (and (not o) n)
                       (js/setTimeout
                        (fn []
-                         (let [target-input (.querySelector @*t-body
-                                                            (str "#" input-id))]
+                         (when-let [target-input (.querySelector
+                                                  @*t-body
+                                                  (str "#" input-id))]
                            (.. target-input (setSelectionRange 0 99999))))
                        20))))
      *cell    (r/cursor *cell-data [cell-id])]
@@ -116,65 +117,66 @@
     :or {shape [100 100]
          cell-data {}}}]
   (r/with-let
-    [rows (mapv str (range (first shape)))
-     columns (vec (letter-range (second shape)))
+    [rows        (mapv str (range (first shape)))
+     columns     (vec (letter-range (second shape)))
 
-     *cell-data (r/atom (into {}
-                              (map
-                               (fn [[k v]]
-                                 [k (parse-string v rows columns)])
-                               cell-data)))
+     *cell-data  (r/atom (into {} (map
+                                   (fn [[k v]]
+                                     [k (parse-string v rows columns)])
+                                   cell-data)))
      *cell-cache (atom {})
-
-     *t-body (atom nil)
+     *t-body     (atom nil)
 
      handle-change (fn handle-change [e *cell]
                      (reset! *cell-cache {})
-                     (reset! *cell (parse-string (.. e -target -value) rows columns)))
+                     (reset! *cell (parse-string (.. e -target -value)
+                                                 rows columns)))
      handle-key-down (fn handle-key-down [e c r]
                        (let [selector
                              (cond
                                (= (.-key e) "ArrowUp")
                                (let [new-row (find-adjacent rows r :before)]
-                                 (if-not (nil? new-row) (str c new-row)))
+                                 (when-not (nil? new-row) (str c new-row)))
 
                                (not= -1 (.indexOf ["ArrowDown" "Enter"] (.-key e)))
                                (let [new-row (find-adjacent rows r :after)]
-                                 (if-not (nil? new-row) (str c new-row)))
+                                 (when-not (nil? new-row) (str c new-row)))
 
                                (and (= (.-key e) "ArrowLeft") (.-altKey e))
                                (let [new-column (find-adjacent columns c :before)]
-                                 (if-not (nil? new-column) (str new-column r)))
+                                 (when-not (nil? new-column) (str new-column r)))
 
                                (and (= (.-key e) "ArrowRight") (.-altKey e))
                                (let [new-column (find-adjacent columns c :after)]
-                                 (if-not (nil? new-column) (str new-column r))))]
-                         (if selector
+                                 (when-not (nil? new-column) (str new-column r))))]
+                         (when selector
                            (do
                              (.preventDefault e)
-                             (.focus (.querySelector @*t-body (str "#cell-" selector)))))))
+                             (.focus (.querySelector @*t-body 
+                                                     (str "#cell-" selector)))))))
      clear (fn clear []
              (reset! *cell-data {}))]
-    [card/main
-     "Cells"
-     [:<>
-      [:div {:class "wrapper"}
-       [:table
-        [head columns]
-        [:tbody {:ref #(reset! *t-body %)}
-         (doall
-          (for [r rows]
-            ^{:key r}
-            [:tr {:id (str "row-" r)}
-             [:td {:class "row-key"} r]
-             (doall
-              (for [c columns]
-                ^{:key (str c r)}
-                [cell-view {:c c
-                            :r r
-                            :handle-change   handle-change
-                            :handle-key-down handle-key-down
-                            :*cell-data *cell-data
-                            :*cell-cache *cell-cache
-                            :*t-body *t-body}]))]))]]]
-      [:button {:on-click clear} "Clear"]]]))
+    (let [props {:handle-change   handle-change
+                 :handle-key-down handle-key-down
+                 :*cell-data      *cell-data
+                 :*cell-cache     *cell-cache
+                 :*t-body         *t-body}]
+      [card/main
+       "Cells"
+       [:<>
+        [:div {:class "wrapper"}
+         [:table
+          [head columns]
+          [:tbody {:ref #(reset! *t-body %)}
+           (doall
+            (for [r rows]
+              ^{:key r}
+              [:tr {:id (str "row-" r)}
+               [:td {:class "row-key"} r]
+               (doall
+                (for [c columns]
+                  ^{:key (str c r)}
+                  [cell-view (merge props
+                                    {:c c
+                                     :r r})]))]))]]]
+        [:button {:on-click clear} "Clear"]]])))

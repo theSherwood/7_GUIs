@@ -39,13 +39,18 @@
      _ (add-watch *return-date :error2
                   #(reset! *errors (assoc @*errors :2 (false? (as-date %4)))))
      _ (add-watch *return-date :error3
-                  #(reset! *errors (assoc @*errors :3 (< (as-date %4) (as-date @*start-date)))))
+                  #(reset! *errors 
+                           (assoc @*errors :3 
+                                  (< (as-date %4) (as-date @*start-date)))))
      _ (add-watch *start-date :error3
-                  #(reset! *errors (assoc @*errors :3 (< (as-date @*return-date) (as-date %4)))))
+                  #(reset! *errors 
+                           (assoc @*errors :3
+                                  (< (as-date @*return-date) (as-date %4)))))
 
      book (fn book []
             (let [time-strings {:1 (str " for " @*start-date)
-                                :2 (str " from " @*start-date " to " @*return-date)}
+                                :2 (str
+                                    " from " @*start-date " to " @*return-date)}
                   index (keyword @*flight-type)]
               (js/alert (str "You have booked a "
                              (index flight-map)

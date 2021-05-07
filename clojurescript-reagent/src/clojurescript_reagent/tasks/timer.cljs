@@ -29,9 +29,9 @@
       [:progress {:value (/ (- @*now @*start) @*duration)}]
       [:div {:class "duration"} (.toFixed (/ @*duration 1000) 1)]
       "Duration"
-      [:input {:type "range"
-               :min 0
-               :max MAX
-               :value @*duration
+      [:input {:type      "range"
+               :min       0
+               :max       MAX
+               :value     @*duration
                :on-change (fn [e] (reset! *duration (.. e -target -value)))}]
       [:button {:on-click start-timer!} "Reset Timer"]]]))
