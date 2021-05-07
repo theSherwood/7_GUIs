@@ -67,9 +67,9 @@
                   (let [x (.. e -nativeEvent -layerX)
                         y (.. e -nativeEvent -layerY)]
                     (add-snapshot (conj (@*snapshots @*step) {:x x :y y :r BASE_RADIUS}))))
-     undo (defn undo []
+     undo (fn undo []
             (reset! *step (max (- @*step 1) 0)))
-     redo (defn redo []
+     redo (fn redo []
             (reset! *step (min (+ @*step 1) (- (count @*snapshots) 1))))
      end-resize (fn end-resize []
                   (and (not= @*radius (@*resizing :r))
