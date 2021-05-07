@@ -7,6 +7,7 @@
    [clojurescript-reagent.crud :as crud]
    [clojurescript-reagent.circle :as circle]
    [clojurescript-reagent.cells :as cells]
+   [clojurescript-reagent.cells.sample-data :refer [sample-data]]
    ))
 
 (defn app []
@@ -20,5 +21,5 @@
                ["Gurney" "Halleck"]
                ["Duncan" "Idaho"]]]
    [circle/main]
-   [cells/main]
+   [cells/main {:cell-data sample-data}]
    ])

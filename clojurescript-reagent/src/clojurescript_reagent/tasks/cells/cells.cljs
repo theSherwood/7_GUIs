@@ -2,7 +2,6 @@
   (:require
    [reagent.core :as r]
    [clojurescript-reagent.components.card :as card]
-   [clojurescript-reagent.cells.sample-data :refer [sample-data]]
    [clojurescript-reagent.cells.parse :refer [parse-string]]))
 
 (def LETTERS "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -35,7 +34,7 @@
   (when-let [type (:type cell)]
     (case type
       :string (:string cell)
-      :cell   (resolve-cells [(:cell cell)] cell-data *cell-cache)
+      :cell   (first (resolve-cells [(:cell cell)] cell-data *cell-cache))
       :op     (let [op (:op cell)]
                 (reduce op
                         (map
@@ -93,7 +92,7 @@
                          (let [target-input (.querySelector @*t-body
                                                             (str "#" input-id))]
                            (.. target-input (setSelectionRange 0 99999))))
-                       10))))
+                       20))))
      *cell    (r/cursor *cell-data [cell-id])]
     (let [cell @*cell
           string-type? (= :string (:type cell :string))]
@@ -112,17 +111,19 @@
            ;; Compute the string to display from *cell-data and *cell-cache
             [computed-string cell *cell-data *cell-cache])])])))
 
-(defn main []
+(defn main 
+  [{:keys [shape cell-data] 
+    :or {shape [100 100]
+         cell-data {}}}]
   (r/with-let
-    [shape [100 100]
-     rows (mapv str (range (first shape)))
+    [rows (mapv str (range (first shape)))
      columns (vec (letter-range (second shape)))
 
      *cell-data (r/atom (into {}
                               (map
                                (fn [[k v]]
                                  [k (parse-string v rows columns)])
-                               sample-data)))
+                               cell-data)))
      *cell-cache (atom {})
 
      *t-body (atom nil)
