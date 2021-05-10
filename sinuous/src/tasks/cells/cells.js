@@ -1,5 +1,5 @@
 import { html, o } from "sinuous";
-import { sample } from "sinuous/observable";
+import { sample, subscribe } from "sinuous/observable";
 import { card } from "../../components/card";
 import { sampleData } from "./sampleData.js";
 import { Parser } from "./parse.js";
@@ -25,7 +25,7 @@ function getBase26(n) {
 }
 function getNumberAsLetters(n) {
   let arr = getBase26(n);
-  return arr.map(num => LETTERS[num]).join("");
+  return arr.map((num) => LETTERS[num]).join("");
 }
 function findAdjacent(arr, value, direction) {
   let index = arr.indexOf(value);
@@ -37,9 +37,9 @@ function findAdjacent(arr, value, direction) {
 }
 
 export const cells = (props) => {
-  let shape = props && props.shape || [100, 100]
-  
-  Object.keys(sampleData).forEach(key => {
+  let shape = (props && props.shape) || [100, 100];
+
+  Object.keys(sampleData).forEach((key) => {
     // Make each entry an observable
     sampleData[key] = o(sampleData[key]);
   });
@@ -60,18 +60,20 @@ export const cells = (props) => {
     }
   }
 
-  function handleFocus(e, key) {
-    createNewCell(key)
-    focused(key);
-    setTimeout(() => {
-      // The timeout allows the selection to occur after
-      // the parsing switch inside a cell
-      e.target.setSelectionRange(0, 9999);
-    }, 10);
+  function handleFocus(key) {
+    if (focused() !== key) {
+      createNewCell(key);
+      focused(key);
+      let target = tBody.querySelector("#input-" + key);
+      if (target) {
+        target.focus();
+        target.setSelectionRange(0, 9999);
+      }
+    }
   }
 
-  function handleBlur() {
-    focused(undefined);
+  function handleBlur(key) {
+    if (focused() === key) focused(undefined);
   }
 
   function handleInput(e, key) {
@@ -100,14 +102,43 @@ export const cells = (props) => {
 
     if (selector) {
       e.preventDefault();
-      let input = tBody.querySelector("#input-" + selector);
-      input.focus();
+      handleFocus(selector);
     }
   }
 
   function clear() {
     data({});
   }
+
+  const cellView = ({ j, i }) => {
+    let key = j + i;
+    let hasFocus = o(false);
+
+    subscribe(() => {
+      if (focused() === key && !sample(hasFocus)) {
+        hasFocus(true);
+      } else if (focused() !== key && sample(hasFocus)) {
+        hasFocus(false);
+      }
+    });
+
+    return html` ${() =>
+      hasFocus()
+        ? html`
+            <input
+              id=${"input-" + key}
+              autofocus
+              value=${() => (key in data() ? data()[key]() : "")}
+              onfocus=${() => handleFocus(key)}
+              onblur=${() => handleBlur(key)}
+              onkeydown=${(e) => handleKeydown(e, j, i)}
+              oninput=${(e) => handleInput(e, key)}
+            />
+          `
+        : html`
+            <div>${() => (key in data() ? p.parse(data()[key]()) : "")}</div>
+          `}`;
+  };
 
   const view = html`
     <${card} title="Cells">
@@ -118,37 +149,21 @@ export const cells = (props) => {
               <td class="row-key"></td>
               ${() =>
                 columns.map(
-                  column =>
-                    html`
-                      <td class="column-key">${column}</td>
-                    `
+                  (column) => html` <td class="column-key">${column}</td> `
                 )}
             </tr>
           </thead>
           <tbody>
             ${() =>
               rows.map(
-                i => html`
+                (i) => html`
                   <tr id=${"row-" + i}>
                     <td class="row-key">${i}</td>
                     ${() =>
                       columns.map(
-                        j => html`
-                          <td id=${j + i}>
-                            <input
-                              id=${"input-" + j + i}
-                              value=${() => {
-                                return (j+i) in data()
-                                  ? focused() === j + i
-                                    ? data()[j + i]()
-                                    : p.parse(data()[j + i]())
-                                  : "";
-                              }}
-                              onfocus=${e => handleFocus(e, j + i)}
-                              onblur=${handleBlur}
-                              onkeydown=${e => handleKeydown(e, j, i)}
-                              oninput=${e => handleInput(e, j + i)}
-                            />
+                        (j) => html`
+                          <td id=${j + i} onclick=${() => handleFocus(j + i)}>
+                            <${cellView} j=${j} i=${i} />
                           </td>
                         `
                       )}
