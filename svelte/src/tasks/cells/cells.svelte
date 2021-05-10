@@ -1,8 +1,9 @@
 <script>
-  import Card from "../../components/card.svelte";
-  import {data} from './store.js'
-  import {sampleData} from './sampleData.js'
-  import {Parser} from './parse.js'
+  import Card from '../../components/card.svelte'
+  import Cell from './cell.svelte'
+  import { data } from './store.js'
+  import { sampleData } from './sampleData.js'
+  import { Parser } from './parse.js'
   data.set(sampleData)
 
   const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -10,7 +11,7 @@
   export let shape = [100, 100]
   const rows = range(shape[1])
   const columns = letterRange(shape[0])
-  const p = (new Parser(data, columns, rows))
+  const p = new Parser(data, columns, rows)
   let focused
   let tBody
 
@@ -25,9 +26,9 @@
   function getBase26(n) {
     let result = []
     while (n > 25) {
-      let remainder = n%26
+      let remainder = n % 26
       result.push(remainder)
-      n = Math.floor(n/26) - 1
+      n = Math.floor(n / 26) - 1
     }
     result.push(n)
     return result.reverse()
@@ -35,24 +36,25 @@
 
   function getNumberAsLetters(n) {
     let arr = getBase26(n)
-    return arr.map(num => LETTERS[num]).join('')
+    return arr.map((num) => LETTERS[num]).join('')
   }
 
-  function handleClick(e, key) {
-    $data[key] = $data[key] || ''
-  }
-
-  function handleFocus(e, key) {
-    focused = key
-    setTimeout(() => {
-      // The timeout allows the selection to occur after
-      // the parsing switch inside a cell
-      e.target.setSelectionRange(0, 9999);
-    }, 10)
+  function handleFocus(key) {
+    if (focused !== key) {
+      $data[key] = $data[key] || ''
+      focused = key
+      setTimeout(() => {
+        let target = tBody.querySelector('#input-' + key)
+        if (target) {
+          target.focus()
+          target.setSelectionRange(0, 9999)
+        }
+      }, 10)
+    }
   }
 
   function handleBlur(key) {
-    focused = undefined
+    if (focused === key) focused = undefined
   }
 
   function handleInput(e, key) {
@@ -62,35 +64,35 @@
   function handleKeydown(e, column, row) {
     // Navigate across the spreadsheet with arrow keys (and alt/option key)
     let selector
-    if (e.key === "ArrowUp") {
+    if (e.key === 'ArrowUp') {
       let newRow = findAdjacent(rows, row, 'before')
-      selector = newRow !== null ? column+newRow : null
+      selector = newRow !== null ? column + newRow : null
     }
-    if (e.key === "ArrowDown" || e.key === "Enter") {
+    if (e.key === 'ArrowDown' || e.key === 'Enter') {
       let newRow = findAdjacent(rows, row, 'after')
-      selector = newRow !== null ? column+newRow : null
+      selector = newRow !== null ? column + newRow : null
     }
-    if (e.key === "ArrowLeft" && e.altKey) {
+    if (e.key === 'ArrowLeft' && e.altKey) {
       let newColumn = findAdjacent(columns, column, 'before')
-      selector = newColumn !== null ? newColumn+row : null
+      selector = newColumn !== null ? newColumn + row : null
     }
-    if (e.key === "ArrowRight" && e.altKey) {
+    if (e.key === 'ArrowRight' && e.altKey) {
       let newColumn = findAdjacent(columns, column, 'after')
-      selector = newColumn !== null ? newColumn+row : null
+      selector = newColumn !== null ? newColumn + row : null
     }
 
     if (selector) {
       e.preventDefault()
-      let input = tBody.querySelector('#input-'+selector)
-      input.focus()
+      handleFocus(selector)
     }
   }
 
   function findAdjacent(arr, value, direction) {
     let index = arr.indexOf(value)
     if (index === -1) return null
-    if (direction === 'before') return arr[index-1] === undefined ? null : arr[index-1]
-    if (direction === 'after') return arr[index+1] || null
+    if (direction === 'before')
+      return arr[index - 1] === undefined ? null : arr[index - 1]
+    if (direction === 'after') return arr[index + 1] || null
     return null
   }
 
@@ -104,30 +106,28 @@
     <table>
       <thead>
         <tr>
-          <td class='row-key'></td>
+          <td class="row-key" />
           {#each columns as column}
-            <td class='column-key'>{column}</td>
+            <td class="column-key">{column}</td>
           {/each}
         </tr>
       </thead>
       <tbody bind:this={tBody}>
         {#each rows as i}
-          <tr id={'row-'+i}>
-            <td class='row-key'>{i}</td>
+          <tr id={'row-' + i}>
+            <td class="row-key">{i}</td>
             {#each columns as j}
-              <td id={j+i}>
-                <input 
-                  id={'input-'+j+i}
-                  value={
-                    focused === j+i 
-                    ? $data[j+i] || ''
-                    : p.parse($data[j+i])
-                  }
-                  on:click={(e)=>handleClick(e, j+i)}
-                  on:focus={(e)=>handleFocus(e, j+i)}
-                  on:blur={handleBlur}
-                  on:keydown={(e)=>handleKeydown(e, j, i)}
-                  on:input={(e)=>handleInput(e, j+i)}
+              <td id={j + i} on:click={() => handleFocus(j + i)}>
+                <Cell
+                  {j}
+                  {i}
+                  {focused}
+                  {data}
+                  {p}
+                  {handleFocus}
+                  {handleBlur}
+                  {handleKeydown}
+                  {handleInput}
                 />
               </td>
             {/each}
@@ -159,22 +159,8 @@
     height: 30px;
     border: solid 1px #ddd;
     overflow: hidden;
-  }
-
-  input {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
     text-align: right;
-    border: none;
-    outline: none;
   }
-
-  input:focus {
-    text-align: left;
-  }
-
   .row-key {
     width: min-content;
     padding-left: 15px;
@@ -183,5 +169,6 @@
 
   .column-key {
     min-width: 120px;
+    text-align: center;
   }
 </style>
