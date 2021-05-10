@@ -1,5 +1,5 @@
 import { html } from "sinuous-style";
-import { sample, o } from "sinuous/observable";
+import { sample, o, subscribe } from "sinuous/observable";
 import { card } from "../../components/card";
 import { sampleData } from "./sampleData.js";
 import { Parser } from "./parse.js";
@@ -58,18 +58,20 @@ export const cells = (props) => {
     }
   }
 
-  function handleFocus(e, key) {
-    createNewCell(key);
-    focused(key);
-    setTimeout(() => {
-      // The timeout allows the selection to occur after
-      // the parsing switch inside a cell
-      e.target.setSelectionRange(0, 9999);
-    }, 10);
+  function handleFocus(key) {
+    if (focused() !== key) {
+      createNewCell(key);
+      focused(key);
+      let target = tBody.querySelector("#input-" + key);
+      if (target) {
+        target.focus();
+        target.setSelectionRange(0, 9999);
+      }
+    }
   }
 
-  function handleBlur() {
-    focused(undefined);
+  function handleBlur(key) {
+    if (focused() === key) focused(undefined);
   }
 
   function handleInput(e, key) {
@@ -98,8 +100,7 @@ export const cells = (props) => {
 
     if (selector) {
       e.preventDefault();
-      let input = tBody.querySelector("#input-" + selector);
-      input.focus();
+      handleFocus(selector);
     }
   }
 
@@ -107,7 +108,37 @@ export const cells = (props) => {
     data({});
   }
 
-  const view = html('cells')`
+  const cellView = ({ j, i }) => {
+    let key = j + i;
+    let hasFocus = o(false);
+
+    subscribe(() => {
+      if (focused() === key && !sample(hasFocus)) {
+        hasFocus(true);
+      } else if (focused() !== key && sample(hasFocus)) {
+        hasFocus(false);
+      }
+    });
+
+    return html()` ${() =>
+      hasFocus()
+        ? html("cells")`
+            <input
+              id=${"input-" + key}
+              autofocus
+              value=${() => (key in data() ? data()[key]() : "")}
+              onfocus=${() => handleFocus(key)}
+              onblur=${() => handleBlur(key)}
+              onkeydown=${(e) => handleKeydown(e, j, i)}
+              oninput=${(e) => handleInput(e, key)}
+            />
+          `
+        : html("cells")`
+            <div>${() => (key in data() ? p.parse(data()[key]()) : "")}</div>
+          `}`;
+  };
+
+  const view = html("cells")`
     <${card} title="Cells">
       <div class="wrapper">
         <table>
@@ -129,21 +160,8 @@ export const cells = (props) => {
                     ${() =>
                       columns.map(
                         (j) => html()`
-                          <td id=${j + i}>
-                            <input
-                              id=${"input-" + j + i}
-                              value=${() => {
-                                return j + i in data()
-                                  ? focused() === j + i
-                                    ? data()[j + i]()
-                                    : p.parse(data()[j + i]())
-                                  : "";
-                              }}
-                              onfocus=${(e) => handleFocus(e, j + i)}
-                              onblur=${handleBlur}
-                              onkeydown=${(e) => handleKeydown(e, j, i)}
-                              oninput=${(e) => handleInput(e, j + i)}
-                            />
+                          <td id=${j + i} onclick=${() => handleFocus(j + i)}>
+                            <${cellView} j=${j} i=${i} />
                           </td>
                         `
                       )}
@@ -157,50 +175,59 @@ export const cells = (props) => {
     <//>
 
     <style local>
-      .wrapper {
-        margin: auto;
-        overflow: scroll;
-        max-width: 600px;
-        max-height: 600px;
-        border: solid 1px #ddd;
-      }
-
-      table {
-        table-layout: fixed;
-        border-collapse: collapse;
-        border: solid 1px #ddd;
-        background: white;
-      }
-
-      td {
-        height: 30px;
-        border: solid 1px #ddd;
-        overflow: hidden;
-      }
-
-      input {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        text-align: right;
-        border: none;
-        outline: none;
-      }
-
-      input:focus {
-        text-align: left;
-      }
-
-      .row-key {
-        width: min-content;
-        padding-left: 15px;
-        padding-right: 15px;
-      }
-
-      .column-key {
-        min-width: 120px;
-      }
+    .wrapper {
+      margin: auto;
+      overflow: scroll;
+      max-width: 600px;
+      max-height: 600px;
+      border: solid 1px #ddd;
+    }
+    
+    table {
+      table-layout: fixed;
+      border-collapse: collapse;
+      border: solid 1px #ddd;
+      background: white;
+    }
+    
+    td {
+      height: 30px;
+      border: solid 1px #ddd;
+      overflow: hidden;
+      text-align: right;
+    }
+    
+    td > div {
+      width: 100%;
+      max-width: 120px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    
+    input {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      text-align: right;
+      border: none;
+      outline: none;
+    }
+    
+    input:focus {
+      text-align: left;
+    }
+    
+    .row-key {
+      width: min-content;
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+    
+    .column-key {
+      min-width: 120px;
+      text-align: center;
+    }
     </style>
   `;
 
