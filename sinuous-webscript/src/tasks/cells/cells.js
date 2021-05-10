@@ -1,5 +1,5 @@
 import { o } from "sinuous";
-import { sample } from "sinuous/observable";
+import { sample, subscribe } from "sinuous/observable";
 import { card } from "../../components/card";
 import { sampleData } from "./sampleData.js";
 import { Parser } from "./parse.js";
@@ -70,18 +70,20 @@ export const cells = (props) => {
     }
   }
 
-  function handleFocus(e, key) {
-    createNewCell(key);
-    focused(key);
-    setTimeout(() => {
-      // The timeout allows the selection to occur after
-      // the parsing switch inside a cell
-      e.target.setSelectionRange(0, 9999);
-    }, 10);
+  function handleFocus(key) {
+    if (focused() !== key) {
+      createNewCell(key);
+      focused(key);
+      let target = tBody.querySelector("#input-" + key);
+      if (target) {
+        target.focus();
+        target.setSelectionRange(0, 9999);
+      }
+    }
   }
 
-  function handleBlur() {
-    focused(undefined);
+  function handleBlur(key) {
+    if (focused() === key) focused(undefined);
   }
 
   function handleInput(e, key) {
@@ -110,14 +112,43 @@ export const cells = (props) => {
 
     if (selector) {
       e.preventDefault();
-      let input = tBody.querySelector("#input-" + selector);
-      input.focus();
+      handleFocus(selector);
     }
   }
 
   function clear() {
     data({});
   }
+
+  const cellView = ({ j, i }) => {
+    let key = j + i;
+    let hasFocus = o(false);
+
+    subscribe(() => {
+      if (focused() === key && !sample(hasFocus)) {
+        hasFocus(true);
+      } else if (focused() !== key && sample(hasFocus)) {
+        hasFocus(false);
+      }
+    });
+
+    return () =>
+      hasFocus()
+        ? input
+            .id("input-" + j + i)
+            .onfocus(() => handleFocus(j + i))
+            .onblur(handleBlur)
+            .onkeydown((e) => handleKeydown(e, j, i))
+            .oninput((e) => handleInput(e, j + i))
+            .value(() => {
+              return j + i in data()
+                ? focused() === j + i
+                  ? data()[j + i]()
+                  : p.parse(data()[j + i]())
+                : "";
+            })
+        : div(() => (key in data() ? p.parse(data()[key]()) : ""));
+  };
 
   const view = card(
     { title: "Cells" },
@@ -133,20 +164,8 @@ export const cells = (props) => {
             tr.id("row-" + i)(
               td.class`row-key`(i),
               columns.map((j) =>
-                td.id(j + i)(
-                  input
-                    .id("input-" + j + i)
-                    .onfocus((e) => handleFocus(e, j + i))
-                    .onblur(handleBlur)
-                    .onkeydown((e) => handleKeydown(e, j, i))
-                    .oninput((e) => handleInput(e, j + i))
-                    .value(() => {
-                      return j + i in data()
-                        ? focused() === j + i
-                          ? data()[j + i]()
-                          : p.parse(data()[j + i]())
-                        : "";
-                    })
+                td.id(j + i).onclick(() => handleFocus(j + i))(
+                  cellView({ j: j, i: i })
                 )
               )
             )
