@@ -1,4 +1,4 @@
-import { createState } from "solid-js";
+import { createState, createSignal, createEffect } from "solid-js";
 import Card from "../../components/Card";
 import { sampleData } from "./sampleData";
 import { Parser } from "./parse";
@@ -24,7 +24,7 @@ function getBase26(n) {
 }
 function getNumberAsLetters(n) {
   let arr = getBase26(n);
-  return arr.map(num => LETTERS[num]).join("");
+  return arr.map((num) => LETTERS[num]).join("");
 }
 function findAdjacent(arr, value, direction) {
   let index = arr.indexOf(value);
@@ -35,7 +35,7 @@ function findAdjacent(arr, value, direction) {
   return null;
 }
 
-const Cells = props => {
+const Cells = (props) => {
   let shape = props.shape || [100, 100];
   let rows = range(shape[1]);
   let columns = letterRange(shape[0]);
@@ -43,7 +43,7 @@ const Cells = props => {
 
   let [state, setState] = createState({
     data: sampleData,
-    focused: undefined
+    focused: undefined,
   });
   const p = new Parser(state, columns, rows);
 
@@ -52,17 +52,20 @@ const Cells = props => {
       setState("data", [key], () => "");
     }
   }
-  function handleFocus(e, key) {
-    createNewCell(key);
-    setState({ focused: key });
-    setTimeout(() => {
-      // The timeout allows the selection to occur after
-      // the parsing switch inside a cell
-      e.target.setSelectionRange(0, 9999);
-    }, 10);
+  function handleFocus(key) {
+    if (state.focused !== key) {
+      createNewCell(key);
+      setState({ focused: key });
+      let target = tBody.querySelector("#input-" + key);
+      if (target) {
+        target.focus();
+        target.setSelectionRange(0, 9999);
+      }
+    }
   }
-  function handleBlur() {
-    setState({ focused: undefined });
+
+  function handleBlur(key) {
+    if (state.focused === key) setState({ focused: undefined });
   }
   function handleInput(e, key) {
     setState("data", [key], () => e.target.value);
@@ -89,13 +92,41 @@ const Cells = props => {
 
     if (selector) {
       e.preventDefault();
-      let input = tBody.querySelector("#input-" + selector);
-      input.focus();
+      handleFocus(selector);
     }
   }
   function clear() {
     setState({ data: {} });
   }
+
+  const CellView = ({ j: j, i: i }) => {
+    let key = j + i;
+    let [hasFocus, setHasFocus] = createSignal(false);
+    createEffect(() => {
+      if (state.focused === key && !hasFocus()) {
+        setHasFocus(true);
+      } else if (state.focused !== key && hasFocus()) {
+        setHasFocus(false);
+      }
+    });
+    return (
+      <>
+        {hasFocus() ? (
+          <input
+            id={"input-" + key}
+            autofocus
+            value={key in state.data ? state.data[key] : ""}
+            onfocus={() => handleFocus(key)}
+            onblur={() => handleBlur(key)}
+            onkeydown={(e) => handleKeydown(e, j, i)}
+            oninput={(e) => handleInput(e, key)}
+          />
+        ) : (
+          <div>{key in state.data ? p.parse(state.data[key]) : ""}</div>
+        )}
+      </>
+    );
+  };
 
   return (
     <Card title="Cells">
@@ -104,31 +135,18 @@ const Cells = props => {
           <thead>
             <tr>
               <td class="row-key"></td>
-              {columns.map(column => (
+              {columns.map((column) => (
                 <td class="column-key">{column}</td>
               ))}
             </tr>
           </thead>
           <tbody ref={tBody}>
-            {rows.map(i => (
+            {rows.map((i) => (
               <tr id={"row-" + i}>
                 <td class="row-key">{i}</td>
-                {columns.map(j => (
-                  <td id={j + i}>
-                    <input
-                      id={"input-" + j + i}
-                      value={
-                        j + i in state.data
-                          ? state.focused === j + i
-                            ? state.data[j + i]
-                            : p.parse(state.data[j + i])
-                          : ""
-                      }
-                      onfocus={e => handleFocus(e, j + i)}
-                      onblur={handleBlur}
-                      onkeydown={e => handleKeydown(e, j, i)}
-                      oninput={e => handleInput(e, j + i)}
-                    />
+                {columns.map((j) => (
+                  <td id={j + i} onclick={() => handleFocus(j + i)}>
+                    <CellView j={j} i={i} />
                   </td>
                 ))}
               </tr>
