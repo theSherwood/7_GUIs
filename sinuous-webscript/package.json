@@ -11,9 +11,9 @@
   "license": "MIT",
   "dependencies": {
     "sinuous": "0.27.3",
-    "webscript": "^0.1.2"
+    "webscript": "0.1.2"
   },
   "devDependencies": {
-    "parcel-bundler": "^1.12.4"
+    "parcel-bundler": "1.12.4"
   }
 }
