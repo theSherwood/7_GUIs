@@ -1,13 +1,13 @@
-import React, {useState} from 'react'
-import {Card} from '../components/Card'
+import React, { useState } from "react";
+import { Card } from "../components/Card";
 
-import './Counter.css'
+import "./Counter.css";
 
 export const Counter = () => {
-  let [count, setCount] = useState(0)
+  let [count, setCount] = useState(0);
 
   function handleClick() {
-    setCount(count+1)
+    setCount(count + 1);
   }
 
   return (
@@ -15,7 +15,5 @@ export const Counter = () => {
       {count}
       <button onClick={handleClick}>+</button>
     </Card>
-  )
-}
-
-
+  );
+};

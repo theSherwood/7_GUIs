@@ -1,7 +1,7 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import { Card } from "../components/Card";
 
-import './TemperatureConverter.css'
+import "./TemperatureConverter.css";
 
 function trunc(n) {
   return Number(n.toFixed(2));
@@ -12,7 +12,7 @@ function getC(f) {
 function getF(c) {
   return trunc((9 / 5) * c + 32);
 }
-let r = /^\d+.?\d*$/
+let r = /^\d+.?\d*$/;
 
 export const TemperatureConverter = () => {
   let [c, setC] = useState(0);
@@ -21,14 +21,14 @@ export const TemperatureConverter = () => {
   function updateFromC(e) {
     let { value } = e.target;
     if (r.test(value)) {
-      value = Number(value)
+      value = Number(value);
       setC(value);
       setF(getF(value));
     }
   }
 
   function updateFromF(e) {
-    let { value } = e.target
+    let { value } = e.target;
     if (r.test(value)) {
       value = Number(value);
       setF(value);

@@ -1,8 +1,11 @@
 import React from "react";
-import {Counter} from './tasks/Counter'
-import {TemperatureConverter} from './tasks/TemperatureConverter'
+import { Counter } from "./tasks/Counter";
+import { TemperatureConverter } from "./tasks/TemperatureConverter";
+import { FlightBooker } from "./tasks/FlightBooker";
 
-import './App.css'
+import "./App.css";
+
+console.log("the hell");
 
 const App = () => {
   return (
@@ -11,6 +14,7 @@ const App = () => {
 
       <Counter />
       <TemperatureConverter />
+      <FlightBooker />
     </main>
   );
 };
