@@ -32193,7 +32193,167 @@ var Timer = function Timer() {
 };
 
 exports.Timer = Timer;
-},{"react":"node_modules/react/index.js","../components/Card":"src/components/Card.js","./Timer.css":"src/tasks/Timer.css"}],"src/App.css":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","../components/Card":"src/components/Card.js","./Timer.css":"src/tasks/Timer.css"}],"src/tasks/CRUD.css":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"node_modules/parcel-bundler/src/builtins/css-loader.js"}],"src/tasks/CRUD.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CRUD = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _Card = require("../components/Card");
+
+require("./CRUD.css");
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var initialState = [["Paul", "Atreides"], ["Gurney", "Halleck"], ["Duncan", "Idaho"]];
+
+var Entries = function Entries(_ref) {
+  var prefix = _ref.prefix,
+      entries = _ref.entries,
+      selected = _ref.selected,
+      setSelected = _ref.setSelected;
+  var filteredEntries = entries.map(function (entry, i) {
+    return [entry[0], entry[1], i];
+  }).filter(function (entry) {
+    return entry[1].toLowerCase().startsWith(prefix.toLowerCase());
+  });
+  return /*#__PURE__*/_react.default.createElement("select", {
+    value: selected,
+    onChange: function onChange(e) {
+      return setSelected(e.target.value);
+    },
+    size: "4"
+  }, filteredEntries.map(function (entry, i) {
+    return /*#__PURE__*/_react.default.createElement("option", {
+      value: i,
+      key: i + entry[0] + entry[1]
+    }, entry[1], ", ", entry[0]);
+  }));
+};
+
+var NamesAndButtons = function NamesAndButtons(_ref2) {
+  var create = _ref2.create,
+      update = _ref2.update,
+      del = _ref2.del;
+
+  var _useState = (0, _react.useState)(""),
+      _useState2 = _slicedToArray(_useState, 2),
+      name = _useState2[0],
+      setName = _useState2[1];
+
+  var _useState3 = (0, _react.useState)(""),
+      _useState4 = _slicedToArray(_useState3, 2),
+      surname = _useState4[0],
+      setSurname = _useState4[1];
+
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement("div", null, "Name:", /*#__PURE__*/_react.default.createElement("input", {
+    value: name,
+    onChange: function onChange(e) {
+      return setName(e.target.value);
+    }
+  }), "Surname:", /*#__PURE__*/_react.default.createElement("input", {
+    value: surname,
+    onChange: function onChange(e) {
+      return setSurname(e.target.value);
+    }
+  })), /*#__PURE__*/_react.default.createElement("div", {
+    className: "buttons"
+  }, /*#__PURE__*/_react.default.createElement("button", {
+    onClick: function onClick() {
+      return create(name, surname);
+    }
+  }, "Create"), /*#__PURE__*/_react.default.createElement("button", {
+    onClick: function onClick() {
+      return update(name, surname);
+    }
+  }, "Update"), /*#__PURE__*/_react.default.createElement("button", {
+    onClick: del
+  }, "Delete")));
+};
+
+var CRUD = function CRUD() {
+  var _useState5 = (0, _react.useState)(""),
+      _useState6 = _slicedToArray(_useState5, 2),
+      prefix = _useState6[0],
+      setPrefix = _useState6[1];
+
+  var _useState7 = (0, _react.useState)(initialState),
+      _useState8 = _slicedToArray(_useState7, 2),
+      entries = _useState8[0],
+      setEntries = _useState8[1];
+
+  var _useState9 = (0, _react.useState)(-1),
+      _useState10 = _slicedToArray(_useState9, 2),
+      selected = _useState10[0],
+      setSelected = _useState10[1];
+
+  function create(name, surname) {
+    var newEntries = entries.slice();
+    newEntries.push([name, surname]);
+    setEntries(newEntries);
+  }
+
+  function update(name, surname) {
+    if (selected > -1) {
+      var newEntries = entries.slice();
+      newEntries[selected] = [name, surname];
+      setEntries(newEntries);
+    }
+  }
+
+  function del() {
+    if (selected > -1) setEntries(entries.filter(function (v, i) {
+      return i != selected;
+    }));
+  }
+
+  return /*#__PURE__*/_react.default.createElement(_Card.Card, {
+    title: "CRUD"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "wrapper"
+  }, "Filter prefix:", /*#__PURE__*/_react.default.createElement("input", {
+    value: prefix,
+    onChange: function onChange(e) {
+      setPrefix(e.target.value);
+      setSelected(-1);
+    }
+  }), /*#__PURE__*/_react.default.createElement(Entries, {
+    entries: entries,
+    prefix: prefix,
+    selected: selected,
+    setSelected: setSelected
+  }), /*#__PURE__*/_react.default.createElement(NamesAndButtons, {
+    create: create,
+    update: update,
+    del: del
+  })));
+};
+
+exports.CRUD = CRUD;
+},{"react":"node_modules/react/index.js","../components/Card":"src/components/Card.js","./CRUD.css":"src/tasks/CRUD.css"}],"src/App.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -32216,6 +32376,8 @@ var _FlightBooker = require("./tasks/FlightBooker");
 
 var _Timer = require("./tasks/Timer");
 
+var _CRUD = require("./tasks/CRUD");
+
 require("./App.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -32225,12 +32387,12 @@ var App = function App() {
     className: "App"
   }, /*#__PURE__*/_react.default.createElement("a", {
     href: "../../index.html"
-  }, "Home"), /*#__PURE__*/_react.default.createElement(_Counter.Counter, null), /*#__PURE__*/_react.default.createElement(_TemperatureConverter.TemperatureConverter, null), /*#__PURE__*/_react.default.createElement(_FlightBooker.FlightBooker, null), /*#__PURE__*/_react.default.createElement(_Timer.Timer, null));
+  }, "Home"), /*#__PURE__*/_react.default.createElement(_Counter.Counter, null), /*#__PURE__*/_react.default.createElement(_TemperatureConverter.TemperatureConverter, null), /*#__PURE__*/_react.default.createElement(_FlightBooker.FlightBooker, null), /*#__PURE__*/_react.default.createElement(_Timer.Timer, null), /*#__PURE__*/_react.default.createElement(_CRUD.CRUD, null));
 };
 
 var _default = App;
 exports.default = _default;
-},{"react":"node_modules/react/index.js","./tasks/Counter":"src/tasks/Counter.js","./tasks/TemperatureConverter":"src/tasks/TemperatureConverter.js","./tasks/FlightBooker":"src/tasks/FlightBooker.js","./tasks/Timer":"src/tasks/Timer.js","./App.css":"src/App.css"}],"src/index.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","./tasks/Counter":"src/tasks/Counter.js","./tasks/TemperatureConverter":"src/tasks/TemperatureConverter.js","./tasks/FlightBooker":"src/tasks/FlightBooker.js","./tasks/Timer":"src/tasks/Timer.js","./tasks/CRUD":"src/tasks/CRUD.js","./App.css":"src/App.css"}],"src/index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));

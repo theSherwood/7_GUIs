@@ -3,6 +3,7 @@ import { Counter } from "./tasks/Counter";
 import { TemperatureConverter } from "./tasks/TemperatureConverter";
 import { FlightBooker } from "./tasks/FlightBooker";
 import { Timer } from "./tasks/Timer";
+import { CRUD } from "./tasks/CRUD"
 
 import "./App.css";
 
@@ -15,6 +16,7 @@ const App = () => {
       <TemperatureConverter />
       <FlightBooker />
       <Timer />
+      <CRUD />
     </main>
   );
 };
