@@ -32087,7 +32087,113 @@ var FlightBooker = function FlightBooker() {
 };
 
 exports.FlightBooker = FlightBooker;
-},{"react":"node_modules/react/index.js","../components/Card":"src/components/Card.js","./FlightBooker.css":"src/tasks/FlightBooker.css"}],"src/App.css":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","../components/Card":"src/components/Card.js","./FlightBooker.css":"src/tasks/FlightBooker.css"}],"src/tasks/Timer.css":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"node_modules/parcel-bundler/src/builtins/css-loader.js"}],"src/tasks/Timer.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Timer = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _Card = require("../components/Card");
+
+require("./Timer.css");
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var MAX = 30000;
+
+var formatDuration = function formatDuration(duration) {
+  return (duration / 1000).toFixed(1);
+};
+
+var getNow = function getNow() {
+  return new Date().valueOf();
+};
+
+var Progress = function Progress(_ref) {
+  var start = _ref.start,
+      duration = _ref.duration;
+
+  var _useState = (0, _react.useState)(start),
+      _useState2 = _slicedToArray(_useState, 2),
+      time = _useState2[0],
+      setTime = _useState2[1];
+
+  (0, _react.useEffect)(function () {
+    var interval = setInterval(function () {
+      setTime(getNow());
+    }, 10);
+    return function () {
+      clearInterval(interval);
+    };
+  }, []);
+  return /*#__PURE__*/_react.default.createElement("progress", {
+    value: (time - start) / duration
+  });
+};
+
+var Timer = function Timer() {
+  var _useState3 = (0, _react.useState)(5000),
+      _useState4 = _slicedToArray(_useState3, 2),
+      duration = _useState4[0],
+      setDuration = _useState4[1];
+
+  var _useState5 = (0, _react.useState)(getNow()),
+      _useState6 = _slicedToArray(_useState5, 2),
+      start = _useState6[0],
+      setStart = _useState6[1];
+
+  function resetTimer() {
+    var now = getNow();
+    setStart(now);
+  }
+
+  return /*#__PURE__*/_react.default.createElement(_Card.Card, {
+    title: "Timer"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "wrapper"
+  }, "Elapsed Time: ", /*#__PURE__*/_react.default.createElement(Progress, {
+    start: start,
+    duration: duration
+  }), /*#__PURE__*/_react.default.createElement("div", {
+    className: "duration"
+  }, formatDuration(duration)), "Duration:", /*#__PURE__*/_react.default.createElement("input", {
+    type: "range",
+    min: "0",
+    max: MAX,
+    value: duration,
+    onChange: function onChange(e) {
+      return setDuration(e.target.value);
+    }
+  }), /*#__PURE__*/_react.default.createElement("button", {
+    onClick: resetTimer
+  }, "Reset Timer")));
+};
+
+exports.Timer = Timer;
+},{"react":"node_modules/react/index.js","../components/Card":"src/components/Card.js","./Timer.css":"src/tasks/Timer.css"}],"src/App.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -32108,23 +32214,23 @@ var _TemperatureConverter = require("./tasks/TemperatureConverter");
 
 var _FlightBooker = require("./tasks/FlightBooker");
 
+var _Timer = require("./tasks/Timer");
+
 require("./App.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-console.log("the hell");
 
 var App = function App() {
   return /*#__PURE__*/_react.default.createElement("main", {
     className: "App"
   }, /*#__PURE__*/_react.default.createElement("a", {
     href: "../../index.html"
-  }, "Home"), /*#__PURE__*/_react.default.createElement(_Counter.Counter, null), /*#__PURE__*/_react.default.createElement(_TemperatureConverter.TemperatureConverter, null), /*#__PURE__*/_react.default.createElement(_FlightBooker.FlightBooker, null));
+  }, "Home"), /*#__PURE__*/_react.default.createElement(_Counter.Counter, null), /*#__PURE__*/_react.default.createElement(_TemperatureConverter.TemperatureConverter, null), /*#__PURE__*/_react.default.createElement(_FlightBooker.FlightBooker, null), /*#__PURE__*/_react.default.createElement(_Timer.Timer, null));
 };
 
 var _default = App;
 exports.default = _default;
-},{"react":"node_modules/react/index.js","./tasks/Counter":"src/tasks/Counter.js","./tasks/TemperatureConverter":"src/tasks/TemperatureConverter.js","./tasks/FlightBooker":"src/tasks/FlightBooker.js","./App.css":"src/App.css"}],"src/index.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","./tasks/Counter":"src/tasks/Counter.js","./tasks/TemperatureConverter":"src/tasks/TemperatureConverter.js","./tasks/FlightBooker":"src/tasks/FlightBooker.js","./tasks/Timer":"src/tasks/Timer.js","./App.css":"src/App.css"}],"src/index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -32164,7 +32270,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55902" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61586" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

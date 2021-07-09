@@ -37,6 +37,31 @@ section.card {
 .Flight-Booker .error {
   background: #dd9999;
 }
+.Timer .wrapper {
+  max-width: 400px;
+  text-align: left;
+  margin: auto;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto;
+  grid-gap: 10px 10px;
+  grid-auto-flow: row;
+}
+
+.Timer input {
+  padding: 0;
+  justify-self: stretch;
+  align-self: center;
+}
+
+.Timer button {
+  grid-column: 1/3;
+  grid-row: auto;
+}
+
+.Timer .duration {
+  grid-column: 2;
+}
 main.App {
 	max-width: 800px;
 	margin: auto;
